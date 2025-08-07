@@ -287,9 +287,10 @@
 				
 				<div class="space-y-4">
 					<div>
-						<label class="block text-sm font-medium mb-2">현재 초대 링크</label>
+						<label for="invite-link-input" class="block text-sm font-medium mb-2">현재 초대 링크</label>
 						<div class="flex gap-2">
 							<input
+								id="invite-link-input"
 								type="text"
 								value={`${window.location.origin}/invite/${inviteCode}`}
 								readonly

@@ -278,8 +278,8 @@
 
 			<div class="space-y-4">
 				<!-- Emoji Selection -->
-				<div>
-					<label class="block text-sm font-medium mb-2">이모지 선택</label>
+				<fieldset>
+					<legend class="block text-sm font-medium mb-2">이모지 선택</legend>
 					<div class="grid grid-cols-5 gap-2" role="radiogroup" aria-label="칭찬 이모지 선택">
 						{#each EMOJI_OPTIONS as emoji}
 							<button
@@ -296,7 +296,7 @@
 							</button>
 						{/each}
 					</div>
-				</div>
+				</fieldset>
 
 				<!-- Message -->
 				<div>

@@ -284,4 +284,6 @@ Thumbs.db
 # Claude Code specific
 .claude/
 
+.vercel
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,node,visualstudiocode,windows
