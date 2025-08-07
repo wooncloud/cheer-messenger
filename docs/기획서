@@ -1,0 +1,204 @@
+# Cheer Messenger 개발 계획서 (업데이트)
+
+## 프로젝트 개요
+- **프로젝트명**: cheer-messenger
+- **기술 스택**: SvelteKit + Supabase + shadcn-svelte
+- **목적**: 모임 내에서 서로에게 칭찬과 격려를 주고받을 수 있는 웹 애플리케이션
+
+## 핵심 기능 요구사항
+
+### 1. 사용자 관리
+- 회원가입/로그인 (Supabase Auth)
+- 사용자 프로필 관리
+
+### 2. 모임 관리
+- **모임 목록**: 가입된 모임들을 바둑판 형태로 표시
+- **모임 생성**: 사용자가 새로운 모임을 만들 수 있음 (이름/설명 길이 제한)
+- **모임 관리자**: 모임 생성자가 자동으로 관리자가 됨
+- **초대 시스템**: 고유한 초대 링크 생성 및 공유
+  - 초대 링크 재생성 기능 (관리자)
+  - 존재하지 않는 초대 링크 접근 시 에러 처리
+- **모임 가입**: 초대 링크를 통해 모임에 참여 (최대 인원 제한)
+- **모임 나가기**: 사용자가 모임에서 탈퇴 가능 (기존 칭찬 메시지는 유지)
+- **모임 삭제**: 관리자만 가능
+- **멤버 관리**: 관리자가 멤버 강제 퇴출 가능
+- **관리자 권한 위임**: 기존 관리자가 다른 멤버에게 권한 이양
+
+### 3. 칭찬 시스템
+- **이모지 칭찬**: 기본 👍 외에 ❤️ 등 다양한 이모지 지원
+- **칭찬 메시지**: 선택적으로 텍스트 메시지 첨부 가능 (최대 길이 제한)
+- **공개/비공개 설정**: 
+  - 비공개: 칭찬을 준 사람과 받은 사람만 확인 가능
+  - 공개: 모임 내 모든 구성원이 확인 가능
+- **익명 칭찬**: 칭찬을 보낸 사람의 신원을 숨김
+- **칭찬 관리**: 수정 불가, 작성자만 삭제 가능
+- **자기 자신 칭찬 금지**: 본인에게는 칭찬 보내기 불가
+- **칭찬 쿨타임**: 모임별 설정 가능
+  - 기본값: 하루
+  - 설정 옵션: 텀 없음 ~ 숫자 + [초,분,시,일,주,월,년]
+  - 동일한 수신자에게 칭찬 보내는 텀 제한
+- **칭찬 정렬**: 최근 받은 칭찬 순으로 표시
+- **칭찬 개수 표시**: 받은 칭찬 총 개수 표시
+
+### 4. 에러 처리 및 예외 상황
+- 존재하지 않는 초대 링크 접근 시 안내 페이지
+- 이미 나간 모임에 재가입 처리
+- 삭제된 사용자가 보낸 칭찬 메시지 처리 (익명 처리)
+- 네트워크 오류, 데이터 로딩 실패 시 에러 UI
+- 빈 상태 UI (모임이 없을 때, 칭찬이 없을 때)
+- 로딩 상태 표시
+- 성공/실패 알림 (토스트 메시지)
+
+## 데이터베이스 스키마
+
+### Users 테이블
+```sql
+- id (UUID, Primary Key)
+- email (String, Unique)
+- name (String, Max 50)
+- avatar_url (String, Optional)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+```
+
+### Groups 테이블
+```sql
+- id (UUID, Primary Key)
+- name (String, Max 100)
+- description (String, Max 500, Optional)
+- owner_id (UUID, Foreign Key -> Users.id)
+- invite_code (String, Unique)
+- max_members (Integer, Default 50)
+- praise_cooldown_value (Integer, Default 1)
+- praise_cooldown_unit (String, Default 'day') -- 'second', 'minute', 'hour', 'day', 'week', 'month', 'year', 'none'
+- created_at (Timestamp)
+- updated_at (Timestamp)
+```
+
+### Group_Members 테이블
+```sql
+- id (UUID, Primary Key)
+- group_id (UUID, Foreign Key -> Groups.id)
+- user_id (UUID, Foreign Key -> Users.id)
+- role (String, Default 'member') -- 'admin', 'member'
+- joined_at (Timestamp)
+- left_at (Timestamp, Optional)
+- is_active (Boolean, Default true)
+```
+
+### Praise_Messages 테이블
+```sql
+- id (UUID, Primary Key)
+- group_id (UUID, Foreign Key -> Groups.id)
+- sender_id (UUID, Foreign Key -> Users.id)
+- receiver_id (UUID, Foreign Key -> Users.id)
+- emoji (String, Default '👍')
+- message (Text, Max 500, Optional)
+- is_public (Boolean, Default true)
+- is_anonymous (Boolean, Default false)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+```
+
+### Praise_Cooldowns 테이블 (칭찬 쿨타임 추적)
+```sql
+- id (UUID, Primary Key)
+- group_id (UUID, Foreign Key -> Groups.id)
+- sender_id (UUID, Foreign Key -> Users.id)
+- receiver_id (UUID, Foreign Key -> Users.id)
+- last_praised_at (Timestamp)
+- created_at (Timestamp)
+- updated_at (Timestamp)
+- UNIQUE(group_id, sender_id, receiver_id)
+```
+
+## 주요 페이지 구성
+
+### 1. 인증 페이지
+- `/login` - 로그인
+- `/signup` - 회원가입
+
+### 2. 메인 페이지
+- `/` - 모임 목록 (바둑판 형태)
+- `/create-group` - 모임 생성
+
+### 3. 모임 페이지
+- `/group/[id]` - 모임 상세 (멤버 목록, 칭찬 주고받기)
+- `/group/[id]/settings` - 모임 설정 (관리자만)
+  - 칭찬 쿨타임 설정
+  - 최대 인원 수 설정
+  - 초대 링크 재생성
+  - 멤버 관리 (강제 퇴출)
+  - 관리자 권한 위임
+  - 모임 삭제
+
+### 4. 초대 페이지
+- `/invite/[code]` - 초대 링크 처리
+- `/invite/error` - 유효하지 않은 초대 링크 에러 페이지
+
+### 5. 에러 페이지
+- `/404` - 페이지 찾을 수 없음
+- `/error` - 일반적인 에러 페이지
+
+## 개발 우선순위
+
+### Phase 1: 기본 기능
+1. Supabase 설정 및 인증 구현
+2. 데이터베이스 스키마 생성
+3. 기본 라우팅 및 레이아웃 구성
+4. 에러 처리 및 로딩 상태 구현
+5. 모임 생성/목록 기능
+
+### Phase 2: 핵심 기능
+1. 초대 링크 시스템
+2. 모임 멤버 관리
+3. 기본 칭찬 기능 (이모지)
+4. 칭찬 메시지 추가
+5. 빈 상태 UI 구현
+
+### Phase 3: 고급 기능
+1. 공개/비공개 설정
+2. 익명 칭찬 기능
+3. 칭찬 삭제 기능
+4. 칭찬 쿨타임 시스템
+5. 모임 나가기 기능
+
+### Phase 4: 관리자 기능
+1. 모임 설정 페이지
+2. 멤버 강제 퇴출
+3. 관리자 권한 위임
+4. 모임 삭제 기능
+5. 초대 링크 재생성
+
+### Phase 5: UI/UX 개선
+1. shadcn-svelte 컴포넌트 적용
+2. 반응형 디자인
+3. 애니메이션 효과
+4. 토스트 알림 시스템
+5. 사용성 개선
+
+## 보안 고려사항
+- Row Level Security (RLS) 정책 설정
+- 모임별 데이터 접근 제한
+- 초대 코드 보안 (UUID 기반)
+- 익명 칭찬 시 개인정보 보호
+- 관리자 권한 검증
+- 칭찬 쿨타임 우회 방지
+
+## 비즈니스 로직
+
+### 칭찬 쿨타임 계산 로직
+```javascript
+// 예시: 마지막 칭찬 시간 + 설정된 쿨타임 > 현재 시간이면 쿨타임 중
+const canPraise = (lastPraisedAt, cooldownValue, cooldownUnit) => {
+  if (cooldownUnit === 'none') return true;
+  
+  const now = new Date();
+  const lastPraise = new Date(lastPraisedAt);
+  const cooldownMs = convertToMs(cooldownValue, cooldownUnit);
+  
+  return (now - lastPraise) >= cooldownMs;
+};
+```
+
+이 계획서를 바탕으로 Claude Code에 개발을 요청하시면 됩니다!
