@@ -352,7 +352,9 @@
 								
 								{#if member.role !== 'admin' && member.user_id !== $user?.id}
 									<button
+										type="button"
 										on:click={() => handleKickMember(member.user_id, member.user.name)}
+										aria-label={`${member.user.name}님 강제 퇴출`}
 										class="text-destructive hover:text-destructive/80 text-sm"
 									>
 										강제 퇴출

@@ -280,7 +280,7 @@
 				<!-- Emoji Selection -->
 				<div>
 					<label class="block text-sm font-medium mb-2">이모지 선택</label>
-					<div class="grid grid-cols-5 gap-2">
+					<div class="grid grid-cols-5 gap-2" role="radiogroup" aria-label="칭찬 이모지 선택">
 						{#each EMOJI_OPTIONS as emoji}
 							<button
 								type="button"
@@ -288,6 +288,9 @@
 								class="text-2xl p-2 rounded border hover:bg-muted transition-colors"
 								class:bg-primary={praiseForm.emoji === emoji}
 								class:text-primary-foreground={praiseForm.emoji === emoji}
+								role="radio"
+								aria-checked={praiseForm.emoji === emoji}
+								aria-label={`${emoji} 이모지 선택`}
 							>
 								{emoji}
 							</button>
@@ -314,11 +317,21 @@
 				<!-- Options -->
 				<div class="space-y-2">
 					<label class="flex items-center gap-2">
-						<input type="checkbox" bind:checked={praiseForm.isPublic} />
+						<input 
+							id="isPublic"
+							type="checkbox" 
+							bind:checked={praiseForm.isPublic} 
+							aria-describedby="public-help"
+						/>
 						<span class="text-sm">모든 멤버에게 공개</span>
 					</label>
 					<label class="flex items-center gap-2">
-						<input type="checkbox" bind:checked={praiseForm.isAnonymous} />
+						<input 
+							id="isAnonymous"
+							type="checkbox" 
+							bind:checked={praiseForm.isAnonymous} 
+							aria-describedby="anonymous-help"
+						/>
 						<span class="text-sm">익명으로 보내기</span>
 					</label>
 				</div>
