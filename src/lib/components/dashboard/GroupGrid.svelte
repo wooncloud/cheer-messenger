@@ -3,7 +3,7 @@
 	import type { Group } from '$lib/utils/groups'
 	import GroupCard from './GroupCard.svelte'
 	import EmptyGroupState from './EmptyGroupState.svelte'
-	import LoadingSpinner from './LoadingSpinner.svelte'
+	import LoadingSpinner from '../LoadingSpinner.svelte'
 	
 	export let groups: Group[]
 	export let loading: boolean

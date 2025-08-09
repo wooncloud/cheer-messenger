@@ -5,8 +5,8 @@
 	import { getUserGroups, type Group } from '$lib/utils/groups'
 	import { supabase } from '$lib/supabase'
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
-	import DashboardHeader from '$lib/components/DashboardHeader.svelte'
-	import GroupGrid from '$lib/components/GroupGrid.svelte'
+	import DashboardHeader from '$lib/components/dashboard/DashboardHeader.svelte'
+	import GroupGrid from '$lib/components/dashboard/GroupGrid.svelte'
 
 	let groups: Group[] = []
 	let loadingGroups = true
