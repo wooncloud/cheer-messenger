@@ -1,143 +1,81 @@
 <script lang="ts">
-	import { user, loading } from '$lib/stores/auth'
+	import { user } from '$lib/stores/auth'
 	import { goto } from '$app/navigation'
 	import { onMount } from 'svelte'
-	import { getUserGroups, type Group } from '$lib/utils/groups'
-	import { supabase } from '$lib/supabase'
-
-	let groups: Group[] = []
-	let loadingGroups = true
-	let error = ''
 
 	onMount(() => {
-		if (!$loading && !$user) {
-			goto('/login')
-		} else if ($user) {
-			loadGroups()
+		// 이미 로그인한 사용자는 대시보드로 리다이렉트
+		if ($user) {
+			goto('/dashboard')
 		}
 	})
 
-	$: if (!$loading && !$user) {
-		goto('/login')
-	}
-
-	$: if ($user && loadingGroups) {
-		loadGroups()
-	}
-
-	async function loadGroups() {
-		try {
-			loadingGroups = true
-			groups = await getUserGroups()
-		} catch (err) {
-			error = err instanceof Error ? err.message : '모임을 불러오는데 실패했습니다.'
-		} finally {
-			loadingGroups = false
-		}
-	}
-
-	async function handleLogout() {
-		await supabase.auth.signOut()
-		goto('/login')
-	}
-
-	function formatDate(dateString: string) {
-		return new Date(dateString).toLocaleDateString('ko-KR')
+	// 로그인 상태 변경 시 자동 리다이렉트
+	$: if ($user) {
+		goto('/dashboard')
 	}
 </script>
 
-{#if $loading}
-	<div class="min-h-screen flex items-center justify-center">
-		<div class="text-center">
-			<div class="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-			<p class="text-muted-foreground">로딩 중...</p>
-		</div>
-	</div>
-{:else if $user}
-	<div class="container mx-auto py-8">
-		<div class="flex justify-between items-center mb-8">
-			<div>
-				<h1 class="text-3xl font-bold">내 모임</h1>
-				<p class="text-muted-foreground mt-1">{$user.user_metadata?.name || $user.email}님 환영합니다!</p>
-			</div>
-			<div class="flex gap-4">
-				<button 
-					on:click={() => goto('/create-group')}
-					class="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90"
-				>
-					모임 만들기
-				</button>
-				<button 
-					on:click={handleLogout}
-					class="bg-secondary text-secondary-foreground px-4 py-2 rounded-md hover:bg-secondary/80"
-				>
-					로그아웃
-				</button>
-			</div>
-		</div>
-
-		{#if error}
-			<div class="text-destructive text-sm bg-destructive/10 p-3 rounded-md mb-6">{error}</div>
-		{/if}
-		
-		<!-- 모임 목록 바둑판 형태 -->
-		{#if loadingGroups}
-			<div class="text-center py-12">
-				<div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-				<p class="text-muted-foreground">모임을 불러오는 중...</p>
-			</div>
-		{:else if groups.length === 0}
-			<div class="text-center py-16">
-				<div class="text-6xl mb-4">🎉</div>
-				<h2 class="text-xl font-semibold mb-2">첫 번째 모임을 만들어보세요!</h2>
-				<p class="text-muted-foreground mb-6">
-					친구들과 함께 서로를 칭찬하고 격려할 수 있는 모임을 시작해보세요.
-				</p>
-				<button 
-					on:click={() => goto('/create-group')}
-					class="bg-primary text-primary-foreground px-6 py-3 rounded-md hover:bg-primary/90"
-				>
-					모임 만들기
-				</button>
-			</div>
-		{:else}
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-				{#each groups as group (group.id)}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+	<div class="container mx-auto px-4 py-16">
+		<!-- 헤더 -->
+		<header class="text-center mb-16">
+			<h1 class="text-5xl font-bold text-gray-900 mb-4">
+				🎉 Cheer Messenger
+			</h1>
+			<p class="text-xl text-gray-600 mb-8">
+				팀원들과 서로 칭찬하고 격려하는 소통 플랫폼
+			</p>
+			<div class="flex gap-4 justify-center">
+				{#if $user}
 					<button
-						on:click={() => goto(`/group/${group.id}`)}
-						class="border rounded-lg p-6 hover:shadow-lg transition-all hover:scale-105 text-left bg-card"
+						on:click={() => goto('/dashboard')}
+						class="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-medium hover:bg-primary/90 transition-colors"
 					>
-						<div class="flex items-start justify-between mb-3">
-							<h3 class="font-semibold text-lg line-clamp-2">{group.name}</h3>
-							{#if group.user_role === 'admin'}
-								<span class="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">관리자</span>
-							{/if}
-						</div>
-						
-						{#if group.description}
-							<p class="text-muted-foreground text-sm mb-4 line-clamp-2">{group.description}</p>
-						{/if}
-
-						<div class="flex justify-between items-center text-sm">
-							<span class="text-muted-foreground">멤버 {group.member_count || 0}명</span>
-							<span class="text-muted-foreground">칭찬 {group.praise_count || 0}개</span>
-						</div>
-
-						<div class="mt-3 text-xs text-muted-foreground">
-							생성일: {formatDate(group.created_at)}
-						</div>
+						대시보드로 이동
 					</button>
-				{/each}
+				{:else}
+					<button
+						on:click={() => goto('/login')}
+						class="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-medium hover:bg-primary/90 transition-colors"
+					>
+						시작하기
+					</button>
+				{/if}
 			</div>
-		{/if}
-	</div>
-{/if}
+		</header>
 
-<style>
-	.line-clamp-2 {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-</style>
+		<!-- 주요 기능 -->
+		<section class="grid md:grid-cols-3 gap-8 mb-16">
+			<div class="text-center p-6 bg-white rounded-xl shadow-sm">
+				<div class="text-4xl mb-4">👥</div>
+				<h3 class="text-xl font-semibold mb-3">모임 관리</h3>
+				<p class="text-gray-600">팀, 동호회, 스터디 그룹 등 다양한 모임을 만들고 관리하세요</p>
+			</div>
+			<div class="text-center p-6 bg-white rounded-xl shadow-sm">
+				<div class="text-4xl mb-4">👏</div>
+				<h3 class="text-xl font-semibold mb-3">칭찬하기</h3>
+				<p class="text-gray-600">다양한 이모지와 메시지로 동료들에게 진심 어린 칭찬을 전하세요</p>
+			</div>
+			<div class="text-center p-6 bg-white rounded-xl shadow-sm">
+				<div class="text-4xl mb-4">🔒</div>
+				<h3 class="text-xl font-semibold mb-3">안전한 소통</h3>
+				<p class="text-gray-600">공개/비공개, 익명 칭찬 등 다양한 설정으로 안전하게 소통하세요</p>
+			</div>
+		</section>
+
+		<!-- CTA -->
+		<section class="text-center bg-white rounded-xl p-12 shadow-sm">
+			<h2 class="text-3xl font-bold mb-4">지금 바로 시작해보세요</h2>
+			<p class="text-gray-600 mb-8">Google 계정으로 간편하게 가입하고 첫 번째 모임을 만들어보세요</p>
+			{#if !$user}
+				<button
+					on:click={() => goto('/login')}
+					class="bg-primary text-primary-foreground px-8 py-4 rounded-lg text-lg font-medium hover:bg-primary/90 transition-colors"
+				>
+					Google로 시작하기
+				</button>
+			{/if}
+		</section>
+	</div>
+</div>

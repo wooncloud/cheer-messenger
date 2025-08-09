@@ -16,8 +16,17 @@
 
 		// OAuth 인증 상태 변화 감지
 		const { data: authData } = supabase.auth.onAuthStateChange((event, newSession) => {
-			if (event === 'SIGNED_OUT' || (event === 'SIGNED_IN' && newSession)) {
+			if (event === 'SIGNED_OUT') {
+				$session = null
+				$user = null
 				invalidate('supabase:auth')
+			} else if (event === 'SIGNED_IN' && newSession) {
+				$session = newSession
+				$user = newSession.user
+				invalidate('supabase:auth')
+			} else if (event === 'TOKEN_REFRESHED' && newSession) {
+				$session = newSession
+				$user = newSession.user
 			}
 		})
 

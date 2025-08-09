@@ -5,10 +5,12 @@ Google OAuth 로그인을 사용하기 위해서는 Google Cloud Console과 Supa
 ## 1. Google Cloud Console 설정
 
 ### 1.1 프로젝트 생성 또는 선택
+
 1. [Google Cloud Console](https://console.cloud.google.com/)에 로그인
 2. 기존 프로젝트를 선택하거나 새 프로젝트 생성
 
 ### 1.2 OAuth 2.0 클라이언트 ID 생성
+
 1. **APIs & Services** > **Credentials**로 이동
 2. **+ CREATE CREDENTIALS** > **OAuth client ID** 클릭
 3. **Application type**에서 **Web application** 선택
@@ -25,6 +27,7 @@ Google OAuth 로그인을 사용하기 위해서는 Google Cloud Console과 Supa
 ## 2. Supabase 설정
 
 ### 2.1 Authentication 설정
+
 1. [Supabase Dashboard](https://supabase.com/dashboard)에 로그인
 2. 프로젝트 선택 > **Authentication** > **Providers**로 이동
 3. **Google** 항목을 찾아 **Enable** 체크
@@ -34,11 +37,14 @@ Google OAuth 로그인을 사용하기 위해서는 Google Cloud Console과 Supa
 5. **Save** 클릭
 
 ### 2.2 URL 구성 확인
+
 **Site URL** (Authentication > Settings):
+
 - 개발: `http://localhost:5173`
 - 배포: `https://your-domain.com`
 
 **Redirect URLs** (Authentication > Settings):
+
 - 개발: `http://localhost:5173/auth/callback`
 - 배포: `https://your-domain.com/auth/callback`
 
@@ -73,6 +79,7 @@ create trigger on_auth_user_created
 ## 4. 테스트
 
 ### 4.1 개발 환경에서 테스트
+
 1. `npm run dev`로 개발 서버 실행
 2. `/login` 또는 `/signup` 페이지로 이동
 3. "Google로 로그인" 버튼 클릭
@@ -80,6 +87,7 @@ create trigger on_auth_user_created
 5. 성공 시 홈페이지로 리다이렉트 확인
 
 ### 4.2 문제 해결
+
 - **"redirect_uri_mismatch" 오류**: Google Cloud Console의 Authorized redirect URIs에 정확한 Supabase callback URL이 추가되었는지 확인
 - **"invalid_client" 오류**: Client ID와 Client Secret이 정확히 입력되었는지 확인
 - **로그인 후 리다이렉트되지 않음**: Site URL과 Redirect URLs 설정 확인
@@ -87,12 +95,15 @@ create trigger on_auth_user_created
 ## 5. 보안 고려사항
 
 ### 5.1 스코프 설정
+
 현재 구현에서는 기본 Google 스코프를 사용합니다:
+
 - `openid`: OpenID Connect 인증
 - `email`: 이메일 주소 접근
 - `profile`: 기본 프로필 정보 접근
 
 ### 5.2 데이터 처리
+
 - Google 프로필 사진은 `users.avatar_url`에 저장됩니다
 - Google에서 제공하는 이름은 `users.name`에 저장됩니다
 - 이메일은 `users.email`에 저장됩니다
