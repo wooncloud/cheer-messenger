@@ -7,8 +7,13 @@ export const load: PageServerLoad = async ({
   locals: { getSession },
 }) => {
   const session = await getSession();
+  
+  // 세션이 없으면 클라이언트에서 처리하도록 플래그 전달
   if (!session) {
-    throw error(401, "Unauthorized");
+    return {
+      needsAuth: true,
+      groupId: params.id
+    };
   }
 
   // Get group information and check if user is admin

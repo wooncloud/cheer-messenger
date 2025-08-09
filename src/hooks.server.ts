@@ -14,10 +14,22 @@ export const handle: Handle = async ({ event, resolve }) => {
       cookies: {
         get: (key) => event.cookies.get(key),
         set: (key, value, options) => {
-          event.cookies.set(key, value, options);
+          event.cookies.set(key, value, {
+            ...options,
+            path: '/',
+            httpOnly: false,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+          });
         },
         remove: (key, options) => {
-          event.cookies.delete(key, options);
+          event.cookies.delete(key, {
+            ...options,
+            path: '/',
+            httpOnly: false,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+          });
         },
       },
     },

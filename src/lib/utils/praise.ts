@@ -25,25 +25,38 @@ export const EMOJI_OPTIONS = [
 ];
 
 export async function getGroupMembers(groupId: string): Promise<GroupMember[]> {
-  const { data, error } = await supabase
+  // RPC 함수를 사용하거나 간단한 쿼리로 처리
+  const { data: members, error: membersError } = await supabase
     .from("group_members")
     .select(
       `
 			*,
-			user:users(*),
-			received_praise_count:praise_messages(count)
+			user:users(*)
 		`,
     )
     .eq("group_id", groupId)
     .eq("is_active", true)
-    .eq("praise_messages.group_id", groupId)
     .order("joined_at", { ascending: true });
 
-  if (error) throw error;
+  if (membersError) throw membersError;
+  if (!members) return [];
 
-  return data.map((member) => ({
+  // 전체 그룹의 칭찬 메시지를 한 번에 가져와서 카운트
+  const { data: praises } = await supabase
+    .from("praise_messages")
+    .select("receiver_id")
+    .eq("group_id", groupId);
+
+  // 각 멤버별로 칭찬 수 계산
+  const praiseCountMap = new Map<string, number>();
+  praises?.forEach((praise) => {
+    const count = praiseCountMap.get(praise.receiver_id) || 0;
+    praiseCountMap.set(praise.receiver_id, count + 1);
+  });
+
+  return members.map((member) => ({
     ...member,
-    received_praise_count: member.received_praise_count?.[0]?.count || 0,
+    received_praise_count: praiseCountMap.get(member.user_id) || 0,
   }));
 }
 
@@ -58,8 +71,8 @@ export async function getGroupPraises(
     .select(
       `
 			*,
-			sender:users!praise_messages_sender_id_fkey(id, name, email),
-			receiver:users!praise_messages_receiver_id_fkey(id, name, email)
+			sender:users!praise_messages_sender_id_fkey(*),
+			receiver:users!praise_messages_receiver_id_fkey(*)
 		`,
     )
     .eq("group_id", groupId)
