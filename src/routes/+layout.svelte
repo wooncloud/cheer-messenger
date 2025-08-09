@@ -13,6 +13,8 @@
 
 	onMount(() => {
 		$loading = false
+
+		// OAuth 인증 상태 변화 감지
 		const { data: authData } = supabase.auth.onAuthStateChange((event, newSession) => {
 			if (event === 'SIGNED_OUT' || (event === 'SIGNED_IN' && newSession)) {
 				invalidate('supabase:auth')
