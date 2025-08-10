@@ -21,8 +21,11 @@
 		<!-- 헤더 -->
 		<header class="text-center mb-16">
 			<h1 class="text-5xl font-bold text-gray-900 mb-4">
-				🎉 Cheer Messenger
+				🎉 Hwaiting
 			</h1>
+			<p class="text-xl text-gray-600 mb-8">
+				Let's Hwaiting together!
+			</p>
 			<p class="text-xl text-gray-600 mb-8">
 				팀원들과 서로 칭찬하고 격려하는 소통 플랫폼
 			</p>
