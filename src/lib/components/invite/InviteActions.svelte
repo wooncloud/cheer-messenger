@@ -3,6 +3,7 @@
 
 	export let loading = false
 	export let error = ''
+	export let isAuthenticated = true
 
 	const dispatch = createEventDispatcher<{
 		cancel: void
@@ -36,7 +37,7 @@
 		disabled={loading}
 		class="flex-1 bg-primary text-primary-foreground py-2 px-4 rounded-md hover:bg-primary/90 disabled:opacity-50"
 	>
-		{loading ? '가입 중...' : '모임 가입하기'}
+		{loading ? '가입 중...' : isAuthenticated ? '모임 가입하기' : '로그인하고 가입하기'}
 	</button>
 </div>
 
