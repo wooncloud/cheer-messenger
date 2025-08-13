@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     return {
       group,
       isAuthenticated: !!locals.session,
-      currentUserId: locals.session?.user?.id || null
+      currentUserId: locals.session?.user?.id || null,
     };
   } catch (err) {
     throw error(404, "Invalid invite code");

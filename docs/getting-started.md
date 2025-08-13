@@ -50,6 +50,7 @@ PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
 **값 찾기**:
+
 1. Supabase 대시보드 → **Settings** → **API**
 2. **Project URL** → `PUBLIC_SUPABASE_URL`
 3. **Project API keys** → `anon` `public` → `PUBLIC_SUPABASE_ANON_KEY`
@@ -64,7 +65,7 @@ PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 4. **CREATE CREDENTIALS** → **OAuth client ID** 클릭
 5. 설정값:
    - **Application type**: Web application
-   - **Authorized redirect URIs**: 
+   - **Authorized redirect URIs**:
      ```
      https://your-project-id.supabase.co/auth/v1/callback
      ```
@@ -127,21 +128,27 @@ npm run preview
 ### 자주 발생하는 오류
 
 #### 1. Supabase 연결 오류
+
 ```bash
 Error: Invalid API key
 ```
+
 **해결책**: `.env.local` 파일의 API 키 확인
 
 #### 2. RLS 정책 오류
+
 ```bash
 permission denied for table users
 ```
+
 **해결책**: `schema.sql`이 완전히 실행되었는지 확인
 
 #### 3. Google OAuth 오류
+
 ```bash
 OAuth error: redirect_uri_mismatch
 ```
+
 **해결책**: Google Cloud Console의 Redirect URI 설정 확인
 
 ### 로그 확인 방법

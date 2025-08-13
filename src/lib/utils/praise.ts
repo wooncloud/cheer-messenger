@@ -51,26 +51,31 @@ export async function getGroupMembers(groupId: string): Promise<GroupMember[]> {
   // 전체 그룹의 칭찬 메시지를 한 번에 가져와서 카운트 및 최근 칭찬 데이터 수집
   const { data: praises } = await supabase
     .from("praise_messages")
-    .select(`
+    .select(
+      `
       receiver_id,
       emoji,
       message,
       is_anonymous,
       created_at,
       sender:users!praise_messages_sender_id_fkey(name)
-    `)
+    `,
+    )
     .eq("group_id", groupId)
     .order("created_at", { ascending: false });
 
   // 각 멤버별로 칭찬 수 계산 및 최근 칭찬 데이터 수집
   const praiseCountMap = new Map<string, number>();
-  const memberPraisesMap = new Map<string, Array<{
-    emoji: string;
-    message?: string;
-    sender_name?: string;
-    is_anonymous: boolean;
-    created_at: string;
-  }>>();
+  const memberPraisesMap = new Map<
+    string,
+    Array<{
+      emoji: string;
+      message?: string;
+      sender_name?: string;
+      is_anonymous: boolean;
+      created_at: string;
+    }>
+  >();
 
   praises?.forEach((praise) => {
     const count = praiseCountMap.get(praise.receiver_id) || 0;
@@ -82,7 +87,7 @@ export async function getGroupMembers(groupId: string): Promise<GroupMember[]> {
       message: praise.message || undefined,
       sender_name: praise.is_anonymous ? undefined : praise.sender?.name,
       is_anonymous: praise.is_anonymous,
-      created_at: praise.created_at
+      created_at: praise.created_at,
     });
     memberPraisesMap.set(praise.receiver_id, memberPraises);
   });

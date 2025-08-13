@@ -27,6 +27,7 @@ cheer-messenger/
 ## 🎯 소스 코드 구조 (`src/`)
 
 ### 루트 파일들
+
 ```
 src/
 ├── 📄 app.html                     # HTML 템플릿
@@ -36,33 +37,35 @@ src/
 ```
 
 #### `app.html`
+
 ```html
 <!-- SvelteKit 앱의 기본 HTML 템플릿 -->
 <!DOCTYPE html>
 <html lang="ko">
-<head>
+  <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%sveltekit.assets%/favicon.png" />
     <meta name="viewport" content="width=device-width" />
     %sveltekit.head%
-</head>
-<body data-sveltekit-preload-data="hover">
+  </head>
+  <body data-sveltekit-preload-data="hover">
     <div style="display: contents">%sveltekit.body%</div>
-</body>
+  </body>
 </html>
 ```
 
 #### `hooks.server.ts`
+
 ```typescript
 // 서버 사이드 요청 처리
-import { createServerClient } from '@supabase/ssr'
-import { redirect } from '@sveltejs/kit'
+import { createServerClient } from "@supabase/ssr";
+import { redirect } from "@sveltejs/kit";
 
 export const handle = async ({ event, resolve }) => {
   // Supabase 세션 관리
   // 인증 상태 확인
   // 보호된 라우트 처리
-}
+};
 ```
 
 ### 라이브러리 (`src/lib/`)
@@ -79,17 +82,19 @@ src/lib/
 #### 핵심 파일들
 
 **`supabase.ts`** - Supabase 클라이언트 설정
+
 ```typescript
-import { createClient } from '@supabase/supabase-js'
-import type { Database } from './database.types'
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "./database.types";
 
 export const supabase = createClient<Database>(
   PUBLIC_SUPABASE_URL,
-  PUBLIC_SUPABASE_ANON_KEY
-)
+  PUBLIC_SUPABASE_ANON_KEY,
+);
 ```
 
 **`database.types.ts`** - 자동 생성된 타입 정의
+
 ```typescript
 export type Database = {
   public: {
@@ -149,16 +154,17 @@ src/lib/components/
 - **명확한 이름**: 컴포넌트 역할을 명확히 표현
 
 #### 컴포넌트 구조 예시
+
 ```svelte
 <!-- GroupCard.svelte -->
 <script lang="ts">
   // Props 타입 정의
   export let group: Group
   export let userRole: string
-  
+
   // 내부 상태
   let isLoading = false
-  
+
   // 이벤트 핸들러
   const handleClick = () => { ... }
 </script>
@@ -185,6 +191,7 @@ src/lib/stores/
 ```
 
 #### `auth.ts` - 인증 상태 관리
+
 ```typescript
 import { writable } from 'svelte/store'
 import type { User } from '@supabase/supabase-js'
@@ -200,6 +207,7 @@ export const authStore = {
 ```
 
 #### `toast.ts` - 알림 상태 관리
+
 ```typescript
 import { writable } from 'svelte/store'
 
@@ -226,12 +234,13 @@ src/lib/utils/
 ```
 
 #### 함수 구조 예시
+
 ```typescript
 // groups.ts
 export interface Group extends Tables<"groups"> {
-  member_count?: number
-  praise_count?: number
-  user_role?: string
+  member_count?: number;
+  praise_count?: number;
+  user_role?: string;
 }
 
 export async function createGroup(data: CreateGroupData): Promise<Group> {
@@ -280,6 +289,7 @@ src/routes/
 #### 라우트 파일 역할
 
 **`+layout.svelte`** - 모든 페이지의 공통 레이아웃
+
 ```svelte
 <script>
   import '../app.css'
@@ -294,15 +304,16 @@ src/routes/
 ```
 
 **`+page.server.ts`** - 서버 사이드 데이터 로딩
+
 ```typescript
-import type { PageServerLoad } from './$types'
+import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ params, locals }) => {
   // 서버에서 데이터 로드
   return {
-    group: await getGroup(params.id)
-  }
-}
+    group: await getGroup(params.id),
+  };
+};
 ```
 
 ## 🗄️ 데이터베이스 (`supabase/`)
@@ -313,6 +324,7 @@ supabase/
 ```
 
 #### `schema.sql` - 완전한 데이터베이스 설계
+
 ```sql
 -- 테이블 생성
 CREATE TABLE users (...);
@@ -341,6 +353,7 @@ static/
 ## 📦 설정 파일들
 
 ### `package.json` - 프로젝트 설정
+
 ```json
 {
   "name": "cheer-messenger",
@@ -356,40 +369,45 @@ static/
 ```
 
 ### `svelte.config.js` - SvelteKit 설정
+
 ```javascript
-import adapter from '@sveltejs/adapter-vercel'
+import adapter from "@sveltejs/adapter-vercel";
 
 const config = {
   kit: {
-    adapter: adapter()
-  }
-}
+    adapter: adapter(),
+  },
+};
 ```
 
 ### `tailwind.config.js` - Tailwind 설정
+
 ```javascript
 module.exports = {
-  content: ['./src/**/*.{html,js,svelte,ts}'],
+  content: ["./src/**/*.{html,js,svelte,ts}"],
   theme: {
-    extend: {}
+    extend: {},
   },
-  plugins: []
-}
+  plugins: [],
+};
 ```
 
 ## 📋 개발 가이드라인
 
 ### 파일 명명 규칙
+
 - **컴포넌트**: PascalCase (예: `GroupCard.svelte`)
 - **유틸리티**: camelCase (예: `auth.ts`, `groups.ts`)
 - **라우트**: kebab-case (예: `create-group/`)
 
 ### 폴더 구조 원칙
+
 - **기능별 그룹화**: 관련 컴포넌트를 폴더로 묶음
 - **계층적 구조**: 상위-하위 관계를 폴더로 표현
 - **명확한 분리**: 역할별로 명확하게 분리
 
 ### 의존성 관리
+
 - **상대 경로 최소화**: `$lib` 별칭 사용
 - **순환 의존성 방지**: 단방향 의존성 유지
 - **타입 안전성**: TypeScript 활용

@@ -16,19 +16,19 @@ export const handle: Handle = async ({ event, resolve }) => {
         set: (key, value, options) => {
           event.cookies.set(key, value, {
             ...options,
-            path: '/',
+            path: "/",
             httpOnly: false,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax'
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
           });
         },
         remove: (key, options) => {
           event.cookies.delete(key, {
             ...options,
-            path: '/',
+            path: "/",
             httpOnly: false,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax'
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
           });
         },
       },

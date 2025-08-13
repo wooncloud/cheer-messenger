@@ -14,7 +14,7 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-    
+
     groups {
         uuid id PK
         varchar name
@@ -27,7 +27,7 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-    
+
     group_members {
         uuid id PK
         uuid group_id FK
@@ -37,7 +37,7 @@ erDiagram
         timestamptz left_at
         boolean is_active
     }
-    
+
     praise_messages {
         uuid id PK
         uuid group_id FK
@@ -50,7 +50,7 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-    
+
     praise_cooldowns {
         uuid id PK
         uuid group_id FK
@@ -60,7 +60,7 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
-    
+
     users ||--o{ groups : "owns"
     users ||--o{ group_members : "belongs to"
     groups ||--o{ group_members : "contains"
@@ -90,16 +90,18 @@ CREATE TABLE users (
 ```
 
 #### 필드 설명
-| 필드 | 타입 | 제약조건 | 설명 |
-|------|------|----------|------|
-| `id` | UUID | PK, FK | Supabase Auth 사용자 ID |
-| `email` | VARCHAR(255) | UNIQUE, NOT NULL | 이메일 주소 |
-| `name` | VARCHAR(50) | NOT NULL | 사용자 이름 |
-| `avatar_url` | TEXT | NULL | 프로필 이미지 URL |
-| `created_at` | TIMESTAMPTZ | DEFAULT NOW() | 생성 시간 |
-| `updated_at` | TIMESTAMPTZ | DEFAULT NOW() | 수정 시간 |
+
+| 필드         | 타입         | 제약조건         | 설명                    |
+| ------------ | ------------ | ---------------- | ----------------------- |
+| `id`         | UUID         | PK, FK           | Supabase Auth 사용자 ID |
+| `email`      | VARCHAR(255) | UNIQUE, NOT NULL | 이메일 주소             |
+| `name`       | VARCHAR(50)  | NOT NULL         | 사용자 이름             |
+| `avatar_url` | TEXT         | NULL             | 프로필 이미지 URL       |
+| `created_at` | TIMESTAMPTZ  | DEFAULT NOW()    | 생성 시간               |
+| `updated_at` | TIMESTAMPTZ  | DEFAULT NOW()    | 수정 시간               |
 
 #### 비즈니스 규칙
+
 - Supabase Auth와 1:1 관계
 - 이메일은 고유해야 함
 - 사용자 이름은 50자 제한
@@ -124,18 +126,20 @@ CREATE TABLE groups (
 ```
 
 #### 필드 설명
-| 필드 | 타입 | 제약조건 | 설명 |
-|------|------|----------|------|
-| `id` | UUID | PK | 모임 고유 ID |
-| `name` | VARCHAR(100) | NOT NULL | 모임 이름 |
-| `description` | VARCHAR(500) | NULL | 모임 설명 |
-| `owner_id` | UUID | FK, NOT NULL | 모임 생성자 ID |
-| `invite_code` | VARCHAR(36) | UNIQUE, NOT NULL | 초대 코드 (UUID) |
-| `max_members` | INTEGER | DEFAULT 50, CHECK | 최대 멤버 수 (1-1000) |
-| `praise_cooldown_value` | INTEGER | DEFAULT 1, CHECK | 쿨타임 값 |
-| `praise_cooldown_unit` | VARCHAR(20) | DEFAULT 'day', CHECK | 쿨타임 단위 |
+
+| 필드                    | 타입         | 제약조건             | 설명                  |
+| ----------------------- | ------------ | -------------------- | --------------------- |
+| `id`                    | UUID         | PK                   | 모임 고유 ID          |
+| `name`                  | VARCHAR(100) | NOT NULL             | 모임 이름             |
+| `description`           | VARCHAR(500) | NULL                 | 모임 설명             |
+| `owner_id`              | UUID         | FK, NOT NULL         | 모임 생성자 ID        |
+| `invite_code`           | VARCHAR(36)  | UNIQUE, NOT NULL     | 초대 코드 (UUID)      |
+| `max_members`           | INTEGER      | DEFAULT 50, CHECK    | 최대 멤버 수 (1-1000) |
+| `praise_cooldown_value` | INTEGER      | DEFAULT 1, CHECK     | 쿨타임 값             |
+| `praise_cooldown_unit`  | VARCHAR(20)  | DEFAULT 'day', CHECK | 쿨타임 단위           |
 
 #### 쿨타임 단위 옵션
+
 - `none`: 제한 없음
 - `second`: 초
 - `minute`: 분
@@ -163,17 +167,19 @@ CREATE TABLE group_members (
 ```
 
 #### 필드 설명
-| 필드 | 타입 | 제약조건 | 설명 |
-|------|------|----------|------|
-| `id` | UUID | PK | 멤버십 고유 ID |
-| `group_id` | UUID | FK, NOT NULL | 모임 ID |
-| `user_id` | UUID | FK, NOT NULL | 사용자 ID |
-| `role` | VARCHAR(20) | DEFAULT 'member', CHECK | 역할 (admin/member) |
-| `joined_at` | TIMESTAMPTZ | DEFAULT NOW() | 가입 시간 |
-| `left_at` | TIMESTAMPTZ | NULL | 탈퇴 시간 |
-| `is_active` | BOOLEAN | DEFAULT TRUE | 활성 상태 |
+
+| 필드        | 타입        | 제약조건                | 설명                |
+| ----------- | ----------- | ----------------------- | ------------------- |
+| `id`        | UUID        | PK                      | 멤버십 고유 ID      |
+| `group_id`  | UUID        | FK, NOT NULL            | 모임 ID             |
+| `user_id`   | UUID        | FK, NOT NULL            | 사용자 ID           |
+| `role`      | VARCHAR(20) | DEFAULT 'member', CHECK | 역할 (admin/member) |
+| `joined_at` | TIMESTAMPTZ | DEFAULT NOW()           | 가입 시간           |
+| `left_at`   | TIMESTAMPTZ | NULL                    | 탈퇴 시간           |
+| `is_active` | BOOLEAN     | DEFAULT TRUE            | 활성 상태           |
 
 #### 비즈니스 규칙
+
 - 한 사용자는 한 모임에 하나의 활성 멤버십만 가질 수 있음
 - 모임 생성자는 자동으로 `admin` 역할
 - 소프트 삭제 방식 (탈퇴 시 `is_active = false`)
@@ -199,23 +205,26 @@ CREATE TABLE praise_messages (
 ```
 
 #### 필드 설명
-| 필드 | 타입 | 제약조건 | 설명 |
-|------|------|----------|------|
-| `id` | UUID | PK | 칭찬 메시지 고유 ID |
-| `group_id` | UUID | FK, NOT NULL | 모임 ID |
-| `sender_id` | UUID | FK, NOT NULL | 발송자 ID |
-| `receiver_id` | UUID | FK, NOT NULL | 수신자 ID |
-| `emoji` | VARCHAR(10) | DEFAULT '👍' | 칭찬 이모지 |
-| `message` | TEXT | CHECK (≤500자) | 칭찬 메시지 |
-| `is_public` | BOOLEAN | DEFAULT TRUE | 공개/비공개 설정 |
-| `is_anonymous` | BOOLEAN | DEFAULT FALSE | 익명 여부 |
+
+| 필드           | 타입        | 제약조건       | 설명                |
+| -------------- | ----------- | -------------- | ------------------- |
+| `id`           | UUID        | PK             | 칭찬 메시지 고유 ID |
+| `group_id`     | UUID        | FK, NOT NULL   | 모임 ID             |
+| `sender_id`    | UUID        | FK, NOT NULL   | 발송자 ID           |
+| `receiver_id`  | UUID        | FK, NOT NULL   | 수신자 ID           |
+| `emoji`        | VARCHAR(10) | DEFAULT '👍'   | 칭찬 이모지         |
+| `message`      | TEXT        | CHECK (≤500자) | 칭찬 메시지         |
+| `is_public`    | BOOLEAN     | DEFAULT TRUE   | 공개/비공개 설정    |
+| `is_anonymous` | BOOLEAN     | DEFAULT FALSE  | 익명 여부           |
 
 #### 지원 이모지
+
 ```
 👍 ❤️ 🎉 💪 🌟 🔥 👏 🚀 💯 ✨
 ```
 
 #### 비즈니스 규칙
+
 - 자기 자신에게는 칭찬 불가 (`no_self_praise` 제약)
 - 메시지는 최대 500자
 - 같은 모임 멤버 간에만 칭찬 가능
@@ -238,15 +247,17 @@ CREATE TABLE praise_cooldowns (
 ```
 
 #### 필드 설명
-| 필드 | 타입 | 제약조건 | 설명 |
-|------|------|----------|------|
-| `id` | UUID | PK | 쿨타임 레코드 고유 ID |
-| `group_id` | UUID | FK, NOT NULL | 모임 ID |
-| `sender_id` | UUID | FK, NOT NULL | 발송자 ID |
-| `receiver_id` | UUID | FK, NOT NULL | 수신자 ID |
-| `last_praised_at` | TIMESTAMPTZ | DEFAULT NOW() | 마지막 칭찬 시간 |
+
+| 필드              | 타입        | 제약조건      | 설명                  |
+| ----------------- | ----------- | ------------- | --------------------- |
+| `id`              | UUID        | PK            | 쿨타임 레코드 고유 ID |
+| `group_id`        | UUID        | FK, NOT NULL  | 모임 ID               |
+| `sender_id`       | UUID        | FK, NOT NULL  | 발송자 ID             |
+| `receiver_id`     | UUID        | FK, NOT NULL  | 수신자 ID             |
+| `last_praised_at` | TIMESTAMPTZ | DEFAULT NOW() | 마지막 칭찬 시간      |
 
 #### 비즈니스 규칙
+
 - 모임-발송자-수신자 조합은 유일해야 함
 - 칭찬 전송 시 자동으로 업데이트됨
 
@@ -275,6 +286,7 @@ CREATE INDEX idx_praise_cooldowns_lookup ON praise_cooldowns(group_id, sender_id
 데이터 보안을 위한 행 수준 보안 정책입니다.
 
 ### Users 정책
+
 ```sql
 -- 사용자는 자신의 프로필만 조회/수정 가능
 CREATE POLICY "Users can view their own profile" ON users
@@ -288,14 +300,15 @@ CREATE POLICY "Users can insert their own profile" ON users
 ```
 
 ### Groups 정책
+
 ```sql
 -- 모임 멤버만 모임 정보 조회 가능
 CREATE POLICY "Users can view groups they are members of" ON groups
     FOR SELECT USING (
         EXISTS (
-            SELECT 1 FROM group_members 
-            WHERE group_members.group_id = groups.id 
-            AND group_members.user_id = auth.uid() 
+            SELECT 1 FROM group_members
+            WHERE group_members.group_id = groups.id
+            AND group_members.user_id = auth.uid()
             AND group_members.is_active = TRUE
         )
     );
@@ -313,14 +326,15 @@ CREATE POLICY "Group owners can delete their groups" ON groups
 ```
 
 ### Group Members 정책
+
 ```sql
 -- 같은 모임 멤버들만 멤버 목록 조회 가능
 CREATE POLICY "Users can view members of their groups" ON group_members
     FOR SELECT USING (
         EXISTS (
-            SELECT 1 FROM group_members gm2 
-            WHERE gm2.group_id = group_members.group_id 
-            AND gm2.user_id = auth.uid() 
+            SELECT 1 FROM group_members gm2
+            WHERE gm2.group_id = group_members.group_id
+            AND gm2.user_id = auth.uid()
             AND gm2.is_active = TRUE
         )
     );
@@ -331,24 +345,25 @@ CREATE POLICY "Users can join groups" ON group_members
 
 -- 본인 탈퇴 또는 모임 소유자가 강제 퇴출 가능
 CREATE POLICY "Users can leave groups" ON group_members
-    FOR UPDATE USING (auth.uid() = user_id OR 
+    FOR UPDATE USING (auth.uid() = user_id OR
         EXISTS (
-            SELECT 1 FROM groups 
-            WHERE groups.id = group_members.group_id 
+            SELECT 1 FROM groups
+            WHERE groups.id = group_members.group_id
             AND groups.owner_id = auth.uid()
         )
     );
 ```
 
 ### Praise Messages 정책
+
 ```sql
 -- 같은 모임 멤버만 칭찬 메시지 조회 가능
 CREATE POLICY "Users can view praise messages in their groups" ON praise_messages
     FOR SELECT USING (
         EXISTS (
-            SELECT 1 FROM group_members 
-            WHERE group_members.group_id = praise_messages.group_id 
-            AND group_members.user_id = auth.uid() 
+            SELECT 1 FROM group_members
+            WHERE group_members.group_id = praise_messages.group_id
+            AND group_members.user_id = auth.uid()
             AND group_members.is_active = TRUE
         )
     );
@@ -358,15 +373,15 @@ CREATE POLICY "Users can create praise messages in their groups" ON praise_messa
     FOR INSERT WITH CHECK (
         auth.uid() = sender_id AND
         EXISTS (
-            SELECT 1 FROM group_members 
-            WHERE group_members.group_id = praise_messages.group_id 
-            AND group_members.user_id = auth.uid() 
+            SELECT 1 FROM group_members
+            WHERE group_members.group_id = praise_messages.group_id
+            AND group_members.user_id = auth.uid()
             AND group_members.is_active = TRUE
         ) AND
         EXISTS (
-            SELECT 1 FROM group_members 
-            WHERE group_members.group_id = praise_messages.group_id 
-            AND group_members.user_id = praise_messages.receiver_id 
+            SELECT 1 FROM group_members
+            WHERE group_members.group_id = praise_messages.group_id
+            AND group_members.user_id = praise_messages.receiver_id
             AND group_members.is_active = TRUE
         )
     );
@@ -397,19 +412,19 @@ DECLARE
 BEGIN
     -- 발송자와 수신자가 모두 활성 멤버인지 확인
     IF NOT EXISTS (
-        SELECT 1 FROM group_members 
+        SELECT 1 FROM group_members
         WHERE group_id = p_group_id AND user_id = p_sender_id AND is_active = TRUE
     ) OR NOT EXISTS (
-        SELECT 1 FROM group_members 
+        SELECT 1 FROM group_members
         WHERE group_id = p_group_id AND user_id = p_receiver_id AND is_active = TRUE
     ) THEN
         RETURN FALSE;
     END IF;
 
     -- 모임 쿨타임 설정 조회
-    SELECT praise_cooldown_value, praise_cooldown_unit 
+    SELECT praise_cooldown_value, praise_cooldown_unit
     INTO v_cooldown_value, v_cooldown_unit
-    FROM groups 
+    FROM groups
     WHERE id = p_group_id;
 
     -- 쿨타임이 없으면 항상 허용
@@ -454,10 +469,10 @@ BEGIN
     INSERT INTO praise_cooldowns (group_id, sender_id, receiver_id, last_praised_at)
     VALUES (NEW.group_id, NEW.sender_id, NEW.receiver_id, NOW())
     ON CONFLICT (group_id, sender_id, receiver_id)
-    DO UPDATE SET 
+    DO UPDATE SET
         last_praised_at = NOW(),
         updated_at = NOW();
-    
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -500,12 +515,14 @@ CREATE TRIGGER update_praise_cooldowns_updated_at BEFORE UPDATE ON praise_cooldo
 ## 📈 데이터 무결성
 
 ### 제약 조건
+
 - **외래 키**: 참조 무결성 보장
 - **고유 제약**: 중복 데이터 방지
 - **체크 제약**: 유효한 값만 허용
 - **NOT NULL**: 필수 필드 보장
 
 ### CASCADE 정책
+
 - **ON DELETE CASCADE**: 상위 레코드 삭제 시 하위 레코드도 함께 삭제
 - **데이터 일관성**: 고아 레코드 방지
 

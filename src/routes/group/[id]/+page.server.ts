@@ -7,12 +7,12 @@ export const load: PageServerLoad = async ({
   locals: { getSession },
 }) => {
   const session = await getSession();
-  
+
   // 세션이 없으면 클라이언트에서 처리하도록 플래그 전달
   if (!session) {
     return {
       needsAuth: true,
-      groupId: params.id
+      groupId: params.id,
     };
   }
 
