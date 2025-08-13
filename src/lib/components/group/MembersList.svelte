@@ -9,32 +9,44 @@
 		memberClick: GroupMember
 	}>()
 
-	function formatDate(dateString: string) {
-		return new Date(dateString).toLocaleString('ko-KR')
+	// 본인을 제외한 멤버 목록
+	$: otherMembers = members.filter(member => member.user_id !== currentUserId)
+
+	function formatTimeAgo(dateString: string) {
+		const now = new Date();
+		const date = new Date(dateString);
+		const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+		
+		if (diffInHours < 1) return '방금';
+		if (diffInHours < 24) return `${diffInHours}시간 전`;
+		const diffInDays = Math.floor(diffInHours / 24);
+		if (diffInDays < 7) return `${diffInDays}일 전`;
+		const diffInWeeks = Math.floor(diffInDays / 7);
+		if (diffInWeeks < 4) return `${diffInWeeks}주 전`;
+		const diffInMonths = Math.floor(diffInDays / 30);
+		return `${diffInMonths}개월 전`;
 	}
 
 	function handleMemberClick(member: GroupMember) {
-		if (member.user_id === currentUserId) return
 		dispatch('memberClick', member)
 	}
 </script>
 
 <div>
-	<h2 class="text-xl font-semibold mb-4">모임 멤버 ({members.length}명)</h2>
+	<h2 class="text-xl font-semibold mb-4">모임 멤버 ({otherMembers.length}명)</h2>
 	<div class="space-y-3">
-		{#each members as member (member.id)}
+		{#each otherMembers as member (member.id)}
 			<button
 				on:click={() => handleMemberClick(member)}
-				disabled={member.user_id === currentUserId}
-				class="w-full text-left border rounded-lg p-4 hover:shadow-md transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
+				class="w-full text-left border rounded-lg p-4 hover:shadow-md transition-shadow"
 			>
 				<div class="flex items-center justify-between">
 					<div class="flex items-center gap-3">
 						<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
 							{member.user.name.charAt(0).toUpperCase()}
 						</div>
-						<div>
-							<div class="font-medium flex items-center gap-2">
+						<div class="flex-1">
+							<div class="font-medium flex items-center gap-2 mb-1">
 								{member.user.name}
 								{#if member.role === 'admin'}
 									<span class="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">
@@ -42,9 +54,28 @@
 									</span>
 								{/if}
 							</div>
-							<div class="text-sm text-muted-foreground">
-								가입일: {formatDate(member.joined_at)}
-							</div>
+							{#if member.recent_praises && member.recent_praises.length > 0}
+								<div class="flex flex-wrap gap-1 max-w-xs">
+									{#each member.recent_praises.slice(0, 8) as praise}
+										<div 
+											class="flex items-center text-xs bg-gray-100 hover:bg-gray-200 rounded-full px-2 py-1 transition-colors"
+											title={praise.message ? `${praise.emoji} "${praise.message}"${praise.is_anonymous ? ' - 익명' : praise.sender_name ? ` - ${praise.sender_name}님` : ''} (${formatTimeAgo(praise.created_at)})` : `${praise.emoji}${praise.is_anonymous ? ' - 익명' : praise.sender_name ? ` - ${praise.sender_name}님` : ''} (${formatTimeAgo(praise.created_at)})`}
+										>
+											<span class="text-sm">{praise.emoji}</span>
+											{#if praise.message}
+												<span class="ml-1 text-gray-600 max-w-[60px] truncate">{praise.message}</span>
+											{/if}
+										</div>
+									{/each}
+									{#if member.recent_praises.length > 8}
+										<span class="text-xs text-gray-500 self-center">+{member.recent_praises.length - 8}개</span>
+									{/if}
+								</div>
+							{:else}
+								<div class="text-sm text-muted-foreground">
+									아직 받은 칭찬이 없어요
+								</div>
+							{/if}
 						</div>
 					</div>
 					<div class="text-right">
