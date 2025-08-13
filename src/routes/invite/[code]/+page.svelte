@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { joinGroup } from '$lib/utils/groups'
 	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
 	import { user } from '$lib/stores/auth'
 	import { browser } from '$app/environment'
 	import { onMount } from 'svelte'
@@ -17,14 +18,22 @@
 
 	// 로그인 후 자동 가입을 위한 상태 관리
 	onMount(() => {
-		// 로그인 후 돌아온 경우 자동 가입 처리
-		console.log('onMount - user:', $user, 'pendingJoinGroup:', sessionStorage.getItem('pendingJoinGroup'))
+		// URL 파라미터로 자동 가입 체크 (로그인 직후 리디렉션된 경우)
+		const autoJoin = $page.url.searchParams.get('autoJoin')
+		if (autoJoin === 'true' && $user) {
+			autoJoinAttempted = true
+			// URL에서 autoJoin 파라미터 제거
+			const cleanUrl = $page.url.pathname
+			window.history.replaceState({}, '', cleanUrl)
+			handleJoinGroup()
+			return
+		}
+		
 		checkAutoJoin()
 	})
 
 	// 사용자 상태 변화 감지하여 자동 가입 처리
 	$: if (browser && $user) {
-		console.log('User state changed, checking auto join')
 		checkAutoJoin()
 	}
 
@@ -32,10 +41,8 @@
 		if (!browser || !$user || autoJoinAttempted) return
 		
 		const pendingGroupId = sessionStorage.getItem('pendingJoinGroup')
-		console.log('checkAutoJoin - pendingGroupId:', pendingGroupId, 'currentGroupId:', data.group.id)
 		
 		if (pendingGroupId && pendingGroupId === data.group.id) {
-			console.log('Auto joining group...')
 			autoJoinAttempted = true
 			sessionStorage.removeItem('pendingJoinGroup')
 			handleJoinGroup()
@@ -43,21 +50,19 @@
 	}
 
 	async function handleJoinGroup() {
-		console.log('handleJoinGroup called - user:', $user, 'loading:', loading)
-		
 		// 로그인하지 않은 경우 로그인 후 자동 가입하도록 설정
 		if (!$user) {
 			if (browser) {
-				console.log('Setting pendingJoinGroup:', data.group.id)
 				sessionStorage.setItem('pendingJoinGroup', data.group.id)
-				goto('/login?redirect=' + encodeURIComponent(`/invite/${data.group.invite_code}`))
+				// URL 파라미터로도 자동 가입 신호 전달
+				const redirectUrl = `/invite/${data.group.invite_code}?autoJoin=true`
+				goto('/login?redirect=' + encodeURIComponent(redirectUrl))
 			}
 			return
 		}
 
 		// 이미 로딩 중이면 중복 실행 방지
 		if (loading) {
-			console.log('Already loading, skipping')
 			return
 		}
 
@@ -65,16 +70,13 @@
 		error = ''
 
 		try {
-			console.log('Attempting to join group:', data.group.id)
 			await joinGroup(data.group.id)
-			console.log('Successfully joined group')
 			success = true
 			
 			setTimeout(() => {
 				goto(`/group/${data.group.id}`)
 			}, 2000)
 		} catch (err) {
-			console.error('Failed to join group:', err)
 			error = err instanceof Error ? err.message : '모임 가입에 실패했습니다.'
 			autoJoinAttempted = false // 실패 시 재시도 허용
 		} finally {

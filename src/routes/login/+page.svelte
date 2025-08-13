@@ -1,14 +1,28 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
 	import { user } from '$lib/stores/auth'
 	import { onMount } from 'svelte'
 	import GoogleAuthButton from '$lib/components/GoogleAuthButton.svelte'
 
+	let redirectUrl = '/dashboard'
+
 	onMount(() => {
+		// URL에서 redirect 파라미터 가져오기
+		const redirect = $page.url.searchParams.get('redirect')
+		if (redirect) {
+			redirectUrl = redirect
+		}
+
 		if ($user) {
-			goto('/dashboard')
+			goto(redirectUrl)
 		}
 	})
+
+	// 사용자 상태 변화 감지
+	$: if ($user) {
+		goto(redirectUrl)
+	}
 </script>
 
 <div class="min-h-screen flex items-center justify-center bg-background">
@@ -19,7 +33,7 @@
 		</div>
 
 		<!-- Google 로그인 버튼 -->
-		<GoogleAuthButton buttonText="Google로 로그인" />
+		<GoogleAuthButton buttonText="Google로 로그인" redirectTo={redirectUrl} />
 
 		<div class="text-center text-sm text-muted-foreground">
 			<p>Google 계정으로 간편하게 로그인하고</p>

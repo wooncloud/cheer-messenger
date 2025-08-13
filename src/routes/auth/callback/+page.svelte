@@ -27,7 +27,13 @@
 
 	function getRedirectPath(): string {
 		const next = $page.url.searchParams.get('next') || '/dashboard'
-		return next === '/' ? '/dashboard' : `/${next.replace(/^\//, '')}`
+		
+		if (!next || next === '/') {
+			return '/dashboard'
+		}
+		
+		// 이미 '/'로 시작하는 경우 그대로 사용
+		return next.startsWith('/') ? next : `/${next}`
 	}
 
 	async function createUserProfile(user: User): Promise<void> {
