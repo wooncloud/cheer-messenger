@@ -286,4 +286,7 @@ Thumbs.db
 
 .vercel
 
+# Internal documentation (contains sensitive information)
+docs-internal/
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,node,visualstudiocode,windows
