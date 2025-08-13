@@ -20,6 +20,9 @@
   import MembersList from "$lib/components/group/MembersList.svelte";
   import PraisesList from "$lib/components/group/PraisesList.svelte";
   import PraiseModal from "$lib/components/group/PraiseModal.svelte";
+  import MobileTabs from "$lib/components/group/MobileTabs.svelte";
+  import MobileMembersList from "$lib/components/group/MobileMembersList.svelte";
+  import MobilePraisesList from "$lib/components/group/MobilePraisesList.svelte";
 
   export let data;
 
@@ -33,6 +36,9 @@
   let praiseError = "";
 
   let groupDataLoaded = false;
+  
+  // Mobile tab state
+  let activeTab = 'members';
 
   onMount(async () => {
     // 서버에서 인증이 필요하다고 판단한 경우
@@ -265,7 +271,8 @@
     {#if loading}
       <LoadingState />
     {:else}
-      <div class="grid lg:grid-cols-2 gap-8">
+      <!-- Desktop Layout (lg and above) -->
+      <div class="hidden lg:grid lg:grid-cols-2 gap-8">
         <MembersList 
           {members} 
           currentUserId={$user?.id}
@@ -277,6 +284,34 @@
           currentUserId={$user?.id}
           on:deletePraise={handleDeletePraise}
         />
+      </div>
+      
+      <!-- Mobile Layout (below lg) -->
+      <div class="lg:hidden">
+        <MobileTabs 
+          tabs={[
+            { id: 'members', label: '멤버', count: members.length },
+            { id: 'praises', label: '칭찬', count: praises.length }
+          ]}
+          {activeTab}
+          on:tabChange={(e) => activeTab = e.detail}
+        >
+          <div class="tab-panel {activeTab === 'members' ? 'active' : ''}">
+            <MobileMembersList 
+              {members} 
+              currentUserId={$user?.id}
+              on:memberClick={(e) => handleMemberClick(e.detail)}
+            />
+          </div>
+          
+          <div class="tab-panel {activeTab === 'praises' ? 'active' : ''}">
+            <MobilePraisesList 
+              {praises} 
+              currentUserId={$user?.id}
+              on:deletePraise={handleDeletePraise}
+            />
+          </div>
+        </MobileTabs>
       </div>
     {/if}
   {/if}
