@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { formatDateOnly } from '$lib/utils/time'
+	
 	export let group: {
 		name: string
 		description?: string | null
@@ -31,7 +33,7 @@
 		</div>
 		<div class="flex justify-between">
 			<span class="text-muted-foreground">생성일:</span>
-			<span>{new Date(group.created_at).toLocaleDateString('ko-KR')}</span>
+			<span>{formatDateOnly(group.created_at)}</span>
 		</div>
 	</div>
 </div>

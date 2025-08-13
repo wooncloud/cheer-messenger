@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
 	import type { GroupMember } from '$lib/utils/praise'
+	import { formatTimeAgo } from '$lib/utils/time'
+	import { filterOtherMembers } from '$lib/utils/members'
 
 	export let members: GroupMember[]
 	export let currentUserId: string | undefined
@@ -10,22 +12,7 @@
 	}>()
 
 	// 본인을 제외한 멤버 목록
-	$: otherMembers = members.filter(member => member.user_id !== currentUserId)
-
-	function formatTimeAgo(dateString: string) {
-		const now = new Date();
-		const date = new Date(dateString);
-		const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-		
-		if (diffInHours < 1) return '방금';
-		if (diffInHours < 24) return `${diffInHours}시간 전`;
-		const diffInDays = Math.floor(diffInHours / 24);
-		if (diffInDays < 7) return `${diffInDays}일 전`;
-		const diffInWeeks = Math.floor(diffInDays / 7);
-		if (diffInWeeks < 4) return `${diffInWeeks}주 전`;
-		const diffInMonths = Math.floor(diffInDays / 30);
-		return `${diffInMonths}개월 전`;
-	}
+	$: otherMembers = filterOtherMembers(members, currentUserId)
 
 	function handleMemberClick(member: GroupMember) {
 		dispatch('memberClick', member)

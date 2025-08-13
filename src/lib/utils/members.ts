@@ -1,5 +1,6 @@
 import { supabase } from "$lib/supabase";
 import type { Tables } from "$lib/supabase";
+import type { GroupMember } from "$lib/utils/praise";
 
 export async function leaveGroup(groupId: string) {
   const { data: user } = await supabase.auth.getUser();
@@ -154,4 +155,18 @@ export async function deleteGroup(groupId: string) {
     .eq("owner_id", user.user.id);
 
   if (error) throw error;
+}
+
+/**
+ * 현재 사용자를 제외한 멤버 목록을 필터링
+ * @param members - 전체 멤버 목록
+ * @param currentUserId - 현재 사용자 ID
+ * @returns 현재 사용자를 제외한 멤버 목록
+ */
+export function filterOtherMembers(
+  members: GroupMember[],
+  currentUserId: string | undefined,
+): GroupMember[] {
+  if (!currentUserId) return members;
+  return members.filter((member) => member.user_id !== currentUserId);
 }

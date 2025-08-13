@@ -1,12 +1,9 @@
 <script lang="ts">
 	import type { Group } from '$lib/utils/groups'
+	import { formatDateOnly } from '$lib/utils/time'
 	
 	export let group: Group
 	export let onClick: () => void
-
-	function formatDate(dateString: string): string {
-		return new Date(dateString).toLocaleDateString('ko-KR')
-	}
 </script>
 
 <button
@@ -30,7 +27,7 @@
 	</div>
 
 	<div class="mt-3 text-xs text-muted-foreground">
-		생성일: {formatDate(group.created_at)}
+		생성일: {formatDateOnly(group.created_at)}
 	</div>
 </button>
 

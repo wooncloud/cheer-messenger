@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { GroupMember } from '$lib/utils/praise'
+	import { formatDateOnly } from '$lib/utils/time'
 
 	export let members: GroupMember[]
 	export let loading: boolean
@@ -31,7 +32,7 @@
 								{/if}
 							</div>
 							<div class="text-sm text-muted-foreground">
-								가입일: {new Date(member.joined_at).toLocaleDateString('ko-KR')}
+								가입일: {formatDateOnly(member.joined_at)}
 							</div>
 						</div>
 					</div>

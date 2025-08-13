@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
 	import type { PraiseMessage } from '$lib/utils/praise'
+	import { formatDate } from '$lib/utils/time'
 
 	export let praises: PraiseMessage[]
 	export let currentUserId: string | undefined
@@ -8,10 +9,6 @@
 	const dispatch = createEventDispatcher<{
 		deletePraise: string
 	}>()
-
-	function formatDate(dateString: string) {
-		return new Date(dateString).toLocaleString('ko-KR')
-	}
 
 	function handleDeletePraise(praiseId: string) {
 		dispatch('deletePraise', praiseId)
