@@ -5,7 +5,6 @@
 	import { getUserGroups, type Group } from '$lib/utils/groups'
 	import { supabase } from '$lib/supabase'
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
-	import DashboardHeader from '$lib/components/dashboard/DashboardHeader.svelte'
 	import GroupGrid from '$lib/components/dashboard/GroupGrid.svelte'
 
 	let groups: Group[] = []
@@ -69,19 +68,13 @@
 </script>
 
 {#if $loading}
-	<div class="min-h-screen flex items-center justify-center">
+	<div class="flex items-center justify-center h-64">
 		<LoadingSpinner size="lg" text="로딩 중..." />
 	</div>
 {:else if $user}
-	<div class="container mx-auto py-8">
-		<DashboardHeader 
-			user={$user} 
-			onCreateGroup={handleCreateGroup}
-			onLogout={handleLogout} 
-		/>
-
+	<div class="container mx-auto p-4">
 		{#if error}
-			<div class="text-destructive text-sm bg-destructive/10 p-3 rounded-md mb-6">{error}</div>
+			<div class="text-red-600 text-sm bg-red-50 p-3 rounded-md mb-4">{error}</div>
 		{/if}
 		
 		<GroupGrid 

@@ -3,7 +3,6 @@
 	import { goto } from '$app/navigation'
 	import { user } from '$lib/stores/auth'
 	import { onMount } from 'svelte'
-	import CreateGroupHeader from '$lib/components/create-group/CreateGroupHeader.svelte'
 	import CreateGroupForm from '$lib/components/create-group/CreateGroupForm.svelte'
 	import CreateGroupInfo from '$lib/components/create-group/CreateGroupInfo.svelte'
 
@@ -65,9 +64,7 @@
 	}
 </script>
 
-<div class="container mx-auto py-8 max-w-2xl">
-	<CreateGroupHeader />
-
+<div class="container mx-auto p-4 max-w-2xl">
 	<CreateGroupForm 
 		bind:name
 		bind:description
