@@ -81,7 +81,7 @@ NODE_ENV=development
 VITE_DEV_MODE=true
 
 # 디버그 로그 (선택)
-DEBUG=hwaiting:*
+DEBUG=cheeract:*
 ```
 
 #### 환경별 설정
@@ -258,7 +258,7 @@ npm run build && npm run preview
 
 ```javascript
 // 디버그 로그 활성화
-localStorage.setItem("debug", "hwaiting:*");
+localStorage.setItem("debug", "cheeract:*");
 
 // Supabase 디버그
 localStorage.setItem("supabase.debug", "true");
@@ -366,7 +366,7 @@ npm run check
 npm run dev 2>&1 | tee debug.log
 
 # 특정 에러 추적
-DEBUG=hwaiting:* npm run dev
+DEBUG=cheeract:* npm run dev
 ```
 
 ## 📚 추가 리소스

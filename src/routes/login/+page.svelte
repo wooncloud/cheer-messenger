@@ -28,7 +28,7 @@
 <div class="min-h-screen flex items-center justify-center bg-background">
 	<div class="w-full max-w-md space-y-8 p-8">
 		<div class="text-center">
-			<h1 class="text-3xl font-bold">Let's Hwaiting together!</h1>
+			<h1 class="text-3xl font-bold">Let's Cheeract together!</h1>
 			<p class="text-muted-foreground mt-2">Google 계정으로 시작하세요</p>
 		</div>
 
