@@ -1,89 +1,67 @@
-# Cheer Messenger 문서
+# 문서 목차
 
-Cheer Messenger 프로젝트의 종합 문서 모음입니다.
+Cheeract 프로젝트의 종합 문서 모음입니다.
 
-## 📚 문서 목차
+## 📖 주요 문서
 
 ### 🚀 시작하기
+- **[빠른 시작 가이드](getting-started.md)** - 처음 설정부터 실행까지
+  - 환경 설정, Supabase 연동, Google OAuth 설정
+  - 5분 만에 로컬 환경에서 실행해보기
 
-- [빠른 시작 가이드](./getting-started.md) - 프로젝트 설정 및 실행
-- [프로젝트 개요](../README.md) - 프로젝트 소개 및 주요 기능
+### 🛠️ 개발
+- **[개발 가이드](development.md)** - 개발 환경, 프로젝트 구조, 워크플로우
+  - 개발 도구 설정 및 프로젝트 구조 상세 가이드
+  - 브랜치 전략, 커밋 컨벤션, 문제 해결
 
 ### 🏗️ 아키텍처
+- **[시스템 아키텍처](architecture.md)** - 전체 시스템 설계 및 구조
+  - 기술 스택, 데이터 흐름, 보안 아키텍처
+  - 실시간 기능, 확장성 고려사항
 
-- [시스템 아키텍처](./architecture/system-architecture.md) - 전체 시스템 구조
-- [데이터베이스 설계](./architecture/database-design.md) - 데이터 모델 및 관계
-- [보안 아키텍처](./architecture/security.md) - 인증 및 권한 관리
+### 🗄️ 데이터베이스
+- **[데이터베이스 스키마](database.md)** - DB 스키마, API 참조
+  - 테이블 구조, RLS 정책, 함수
+  - 타입 정의 및 관계
 
-### 🛠️ 개발 가이드
+## 🎯 역할별 가이드
 
-- [개발 환경 설정](./development/setup.md) - 로컬 개발 환경 구축
-- [프로젝트 구조](./development/project-structure.md) - 디렉토리 구조 및 파일 설명
-- [코딩 표준](./development/coding-standards.md) - 코드 스타일 및 컨벤션
+### 신규 개발자
+1. [빠른 시작 가이드](getting-started.md) - 먼저 실행해보기
+2. [개발 가이드](development.md) - 개발 환경 상세 설정
+3. [아키텍처](architecture.md) - 시스템 이해하기
 
-### 📊 API 문서
+### 기존 팀원
+- [개발자 가이드](../CLAUDE.md) - AI 개발 컨텍스트 및 상세 노트
+- [데이터베이스](database.md) - 스키마 변경 시 참조
 
-- [Supabase 스키마](./api/supabase-schema.md) - 데이터베이스 테이블 및 함수
-- [타입 정의](./api/types.md) - TypeScript 타입 시스템
-- [유틸리티 함수](./api/utilities.md) - 공통 헬퍼 함수
+### 코드 리뷰어
+- [개발 가이드](development.md) - 코딩 컨벤션 및 가이드라인
+- [아키텍처](architecture.md) - 시스템 설계 원칙
 
-### ⚡ 기능 가이드
+## ⚡ 빠른 참조
 
-- [인증 시스템](./features/authentication.md) - 로그인/회원가입 플로우
-- [모임 관리](./features/group-management.md) - 모임 생성, 초대, 설정
-- [칭찬 시스템](./features/praise-system.md) - 칭찬 메시지 및 쿨타임
-- [관리자 기능](./features/admin-features.md) - 모임 관리자 전용 기능
+| 작업 | 문서 |
+|------|------|
+| 🏃‍♂️ 프로젝트 실행하기 | [빠른 시작](getting-started.md#-5단계-개발-서버-실행) |
+| 🔧 환경 설정 문제 | [개발 가이드](development.md#-문제-해결) |
+| 📊 DB 스키마 확인 | [데이터베이스](database.md) |
+| 🏗️ 아키텍처 이해 | [아키텍처](architecture.md) |
+| 💻 개발 명령어 | [개발 가이드](development.md#개발-명령어) |
 
-### 🎨 컴포넌트
+## 💡 문서 원칙
 
-- [공통 컴포넌트](./components/common.md) - 재사용 가능한 UI 컴포넌트
-- [페이지별 컴포넌트](./components/pages.md) - 특정 페이지 전용 컴포넌트
-- [폼 컴포넌트](./components/forms.md) - 입력 폼 및 유효성 검사
+- **실용성 우선**: 실제 개발에 도움되는 내용 중심
+- **단계별 구성**: 초보자도 따라할 수 있는 가이드
+- **최신성 유지**: 코드 변경에 따른 문서 업데이트
+- **검색 친화적**: 명확한 제목과 구조화된 내용
 
-### 🚀 배포 및 운영
+## 🤝 기여
 
-- [배포 가이드](./deployment/vercel.md) - Vercel 배포 설정
-- [환경 변수](./deployment/environment.md) - 환경별 설정 관리
-- [모니터링](./operations/monitoring.md) - 애플리케이션 모니터링
-
-## 🎯 빠른 링크
-
-### 개발자용
-
-- [로컬 환경 설정](./development/setup.md#로컬-환경-설정)
-- [데이터베이스 스키마](./api/supabase-schema.md)
-- [컴포넌트 가이드](./components/common.md)
-
-### 기획자/PM용
-
-- [기능 명세서](./features/)
-- [사용자 플로우](./architecture/user-flows.md)
-- [비즈니스 로직](./features/business-logic.md)
-
-### 운영자용
-
-- [배포 가이드](./deployment/)
-- [트러블슈팅](./operations/troubleshooting.md)
-- [성능 최적화](./operations/performance.md)
-
-## 📝 문서 작성 가이드
-
-이 문서들은 다음 원칙에 따라 작성되었습니다:
-
-1. **실용성**: 실제 개발에 도움이 되는 내용 중심
-2. **최신성**: 코드 변경에 따른 문서 업데이트
-3. **완성도**: 예제 코드와 스크린샷 포함
-4. **접근성**: 초보자도 이해할 수 있는 설명
-
-## 🤝 기여하기
-
-문서 개선에 기여하고 싶다면:
-
-1. 오타나 오류 발견 시 [Issue 생성](../../../issues)
-2. 새로운 문서나 개선 사항은 [PR 제출](../../../pulls)
-3. 문서 스타일 가이드는 [여기](./development/documentation-style.md) 참조
+문서 개선 제안이나 오류 발견 시:
+- [GitHub Issues](../../../issues) 생성
+- [Pull Request](../../../pulls) 제출
 
 ---
 
-**마지막 업데이트**: 2024년 8월 10일  
-**문서 버전**: 1.0.0
+**마지막 업데이트**: 2025년 8월 15일
