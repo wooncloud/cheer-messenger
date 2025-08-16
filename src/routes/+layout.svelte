@@ -40,6 +40,15 @@
 		if (routeId?.startsWith('/invite/')) {
 			return { title: '초대', showSettings: false, showBack: true }
 		}
+		if (routeId === '/profile') {
+			return { title: '마이페이지', showSettings: false, showBack: false }
+		}
+		if (routeId === '/profile/edit') {
+			return { title: '프로필 수정', showSettings: false, showBack: true }
+		}
+		if (routeId === '/profile/praises') {
+			return { title: '칭찬 기록', showSettings: false, showBack: true }
+		}
 		return { title: 'Cheeract', showSettings: true, showBack: false }
 	}
 

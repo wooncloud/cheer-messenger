@@ -5,16 +5,14 @@
 	
 	$: currentPath = $page.url.pathname
 	$: isGroupsActive = currentPath === '/dashboard' || currentPath === '/'
-	$: isProfileActive = currentPath === '/profile'
+	$: isProfileActive = currentPath.startsWith('/profile')
 	
 	function navigateToGroups() {
 		goto('/dashboard')
 	}
 	
 	function navigateToProfile() {
-		// 현재는 MY 페이지가 없으므로 임시로 로그아웃 처리
-		// 추후 프로필 페이지가 생기면 goto('/profile')로 변경
-		goto('/dashboard')
+		goto('/profile');
 	}
 </script>
 

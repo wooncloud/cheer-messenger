@@ -276,3 +276,30 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER update_cooldown_after_praise
     AFTER INSERT ON praise_messages
     FOR EACH ROW EXECUTE FUNCTION update_praise_cooldown();
+
+-- Function to get user groups with member counts (해결: N+1 쿼리 문제)
+CREATE OR REPLACE FUNCTION get_user_groups_with_counts(p_user_id UUID)
+RETURNS TABLE (
+    group_id UUID,
+    role TEXT,
+    joined_at TIMESTAMPTZ,
+    group_name TEXT,
+    group_description TEXT,
+    member_count INTEGER
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        gm.group_id,
+        gm.role,
+        gm.joined_at,
+        g.name as group_name,
+        g.description as group_description,
+        get_group_member_count(gm.group_id) as member_count
+    FROM group_members gm
+    JOIN groups g ON g.id = gm.group_id
+    WHERE gm.user_id = p_user_id 
+    AND gm.is_active = TRUE
+    ORDER BY gm.joined_at DESC;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
