@@ -157,16 +157,4 @@ export async function deleteGroup(groupId: string) {
   if (error) throw error;
 }
 
-/**
- * 현재 사용자를 제외한 멤버 목록을 필터링
- * @param members - 전체 멤버 목록
- * @param currentUserId - 현재 사용자 ID
- * @returns 현재 사용자를 제외한 멤버 목록
- */
-export function filterOtherMembers(
-  members: GroupMember[],
-  currentUserId: string | undefined,
-): GroupMember[] {
-  if (!currentUserId) return members;
-  return members.filter((member) => member.user_id !== currentUserId);
-}
+

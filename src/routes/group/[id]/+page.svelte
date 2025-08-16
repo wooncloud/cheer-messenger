@@ -275,7 +275,6 @@
       <div class="hidden lg:grid lg:grid-cols-2 gap-8">
         <MembersList 
           {members} 
-          currentUserId={$user?.id}
           on:memberClick={(e) => handleMemberClick(e.detail)}
         />
         
@@ -299,7 +298,6 @@
           <div class="tab-panel {activeTab === 'members' ? 'active' : ''}">
             <MobileMembersList 
               {members} 
-              currentUserId={$user?.id}
               on:memberClick={(e) => handleMemberClick(e.detail)}
             />
           </div>

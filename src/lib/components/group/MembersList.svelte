@@ -2,17 +2,16 @@
 	import { createEventDispatcher } from 'svelte'
 	import type { GroupMember } from '$lib/utils/praise'
 	import { formatTimeAgo } from '$lib/utils/time'
-	import { filterOtherMembers } from '$lib/utils/members'
+
 
 	export let members: GroupMember[]
-	export let currentUserId: string | undefined
+
 
 	const dispatch = createEventDispatcher<{
 		memberClick: GroupMember
 	}>()
 
-	// 본인을 제외한 멤버 목록
-	$: otherMembers = filterOtherMembers(members, currentUserId)
+
 
 	function handleMemberClick(member: GroupMember) {
 		dispatch('memberClick', member)
@@ -20,9 +19,9 @@
 </script>
 
 <div>
-	<h2 class="text-xl font-semibold mb-4">모임 멤버 ({otherMembers.length}명)</h2>
+	<h2 class="text-xl font-semibold mb-4">모임 멤버 ({members.length}명)</h2>
 	<div class="space-y-3">
-		{#each otherMembers as member (member.id)}
+		{#each members as member (member.id)}
 			<button
 				on:click={() => handleMemberClick(member)}
 				class="w-full text-left border rounded-lg p-4 hover:shadow-md transition-shadow"
