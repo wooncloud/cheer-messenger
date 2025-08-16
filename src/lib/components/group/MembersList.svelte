@@ -5,6 +5,7 @@
 
 
 	export let members: GroupMember[]
+	export let currentUserId: string | undefined
 
 
 	const dispatch = createEventDispatcher<{
@@ -14,7 +15,14 @@
 
 
 	function handleMemberClick(member: GroupMember) {
+		// 자기 자신은 칭찬할 수 없음
+		if (member.user_id === currentUserId) return
 		dispatch('memberClick', member)
+	}
+
+	// 자기 자신인지 확인
+	function isSelf(member: GroupMember): boolean {
+		return member.user_id === currentUserId
 	}
 </script>
 
@@ -24,7 +32,9 @@
 		{#each members as member (member.id)}
 			<button
 				on:click={() => handleMemberClick(member)}
-				class="w-full text-left border rounded-lg p-4 hover:shadow-md transition-shadow"
+				disabled={isSelf(member)}
+				class="w-full text-left border rounded-lg p-4 transition-shadow {isSelf(member) ? 'opacity-60 cursor-not-allowed bg-gray-50' : 'hover:shadow-md cursor-pointer'}"
+				title={isSelf(member) ? '자기 자신에게는 칭찬을 보낼 수 없어요' : ''}
 			>
 				<div class="flex items-center justify-between">
 					<div class="flex items-center gap-3">
@@ -34,6 +44,11 @@
 						<div class="flex-1">
 							<div class="font-medium flex items-center gap-2 mb-1">
 								{member.user.name}
+								{#if isSelf(member)}
+									<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+										나
+									</span>
+								{/if}
 								{#if member.role === 'admin'}
 									<span class="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">
 										관리자
