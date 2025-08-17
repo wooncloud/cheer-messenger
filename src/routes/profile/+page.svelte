@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import ProfileAvatar from '$lib/components/profile/ProfileAvatar.svelte'
-	import PraiseStatsCard from '$lib/components/profile/PraiseStatsCard.svelte'
-	import RecentPraiseCard from '$lib/components/profile/RecentPraiseCard.svelte'
 	import SettingsMenu from '$lib/components/profile/SettingsMenu.svelte'
 	import type { PageData } from './$types'
 
 	export let data: PageData
 
-	$: ({ profile, praiseStats, recentPraises, error } = data)
+	$: ({ profile, error } = data)
 
 	function goToEditProfile() {
 		goto('/profile/edit')
@@ -70,15 +68,6 @@
 			</button>
 		</div>
 	</div>
-
-	<!-- 칭찬 통계 -->
-	<PraiseStatsCard 
-		sentCount={praiseStats?.sentCount || 0} 
-		receivedCount={praiseStats?.receivedCount || 0} 
-	/>
-
-	<!-- 최근 받은 칭찬 -->
-	<RecentPraiseCard recentPraises={recentPraises || []} />
 
 	<!-- 설정 메뉴 -->
 	<SettingsMenu />

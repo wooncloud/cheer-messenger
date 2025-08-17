@@ -5,10 +5,15 @@
 	
 	$: currentPath = $page.url.pathname
 	$: isGroupsActive = currentPath === '/dashboard' || currentPath === '/'
+	$: isStatsActive = currentPath.startsWith('/stats')
 	$: isProfileActive = currentPath.startsWith('/profile')
 	
 	function navigateToGroups() {
 		goto('/dashboard')
+	}
+	
+	function navigateToStats() {
+		goto('/stats')
 	}
 	
 	function navigateToProfile() {
@@ -17,10 +22,11 @@
 </script>
 
 <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
-	<div class="grid grid-cols-2 h-16">
+	<div class="grid grid-cols-3 h-16">
 		<!-- 그룹 탭 -->
 		<button
 			on:click={navigateToGroups}
+			aria-label="그룹 목록으로 이동"
 			class="flex flex-col items-center justify-center space-y-1 transition-colors {isGroupsActive 
 				? 'text-blue-600 bg-blue-50' 
 				: 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}"
@@ -32,9 +38,25 @@
 			<span class="text-xs font-medium">그룹</span>
 		</button>
 		
+		<!-- 통계 탭 -->
+		<button
+			on:click={navigateToStats}
+			aria-label="칭찬 통계로 이동"
+			class="flex flex-col items-center justify-center space-y-1 transition-colors {isStatsActive 
+				? 'text-blue-600 bg-blue-50' 
+				: 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}"
+		>
+			<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+					d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+			</svg>
+			<span class="text-xs font-medium">통계</span>
+		</button>
+		
 		<!-- MY 탭 -->
 		<button
 			on:click={navigateToProfile}
+			aria-label="마이페이지로 이동"
 			class="flex flex-col items-center justify-center space-y-1 transition-colors {isProfileActive 
 				? 'text-blue-600 bg-blue-50' 
 				: 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}"
