@@ -69,7 +69,9 @@ Three-layer architecture:
    - `groups.ts` - Group CRUD operations and membership
    - `praise.ts` - Praise system with cooldown validation
    - `members.ts` - Member management functions
+   - `users.ts` - User profile and statistics functions
    - `auth.ts` - Authentication utilities
+   - `time.ts` - Time formatting and utilities
 
 2. **Type Layer** (`src/lib/database.types.ts`):
    - Auto-generated TypeScript types from Supabase schema
@@ -89,6 +91,8 @@ src/lib/components/
 ├── group/        # Praise system UI
 ├── invite/       # Invitation flow
 ├── settings/     # Admin group management
+├── profile/      # User profile components (stats, avatar, settings)
+├── layout/       # Navigation and layout components
 └── [common components]
 ```
 
@@ -102,9 +106,18 @@ File-based routing with server-side data loading:
 - Real-time updates via Supabase subscriptions in components
 - Error handling through `+error.svelte` boundaries
 
+**Navigation Structure:**
+
+Three-tab bottom navigation (`AppNavigation.svelte`):
+- **그룹** (`/dashboard`) - Main group listing and management
+- **통계** (`/stats`) - Praise statistics and activity history  
+- **MY** (`/profile`) - User profile and account settings
+
 **Key Routes:**
 
 - `/dashboard` - User's groups with member counts and praise stats
+- `/stats` - Dedicated praise statistics and recent praise history
+- `/profile` - User profile information and settings (separated from stats)
 - `/group/[id]` - Group detail with real-time praise feed
 - `/group/[id]/settings` - Admin-only group configuration
 - `/invite/[code]` - Public invitation links with group preview
