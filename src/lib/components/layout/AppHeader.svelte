@@ -9,16 +9,12 @@
 	export let onBack: (() => void) | undefined = undefined
 	
 	async function handleSettings() {
-		// 현재 페이지에 따라 다른 설정 페이지로 이동
+		// 그룹 페이지에서만 사용되므로 그룹 설정으로 이동
 		const currentPath = window.location.pathname
 		
 		if (currentPath.includes('/group/')) {
-			// 그룹 페이지에서는 그룹 설정으로
 			const groupId = currentPath.split('/')[2]
 			goto(`/group/${groupId}/settings`)
-		} else {
-			// 기본적으로는 로그아웃 처리
-			await handleLogout()
 		}
 	}
 	
