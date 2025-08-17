@@ -8,6 +8,8 @@
 	import Toast from '$lib/components/Toast.svelte'
 	import AppHeader from '$lib/components/layout/AppHeader.svelte'
 	import AppNavigation from '$lib/components/layout/AppNavigation.svelte'
+	import PWAInstallButton from '$lib/components/PWAInstallButton.svelte'
+	import { registerServiceWorker, setupInstallPrompt } from '$lib/pwa'
 
 	export let data
 
@@ -58,6 +60,12 @@
 	onMount(() => {
 		$loading = false
 
+		// PWA 설정 초기화
+		if (typeof window !== 'undefined') {
+			registerServiceWorker()
+			setupInstallPrompt()
+		}
+
 		// OAuth 인증 상태 변화 감지
 		const { data: authData } = supabase.auth.onAuthStateChange((event, newSession) => {
 			if (event === 'SIGNED_OUT') {
@@ -95,5 +103,6 @@
 		
 		<AppNavigation />
 		<Toast />
+		<PWAInstallButton />
 	</div>
 {/if}

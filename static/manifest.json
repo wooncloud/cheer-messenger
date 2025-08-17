@@ -1,0 +1,87 @@
+{
+  "name": "Cheeract - 칭찬 메신저",
+  "short_name": "Cheeract",
+  "description": "그룹 기반 칭찬 및 격려 메시지 앱",
+  "start_url": "/?source=pwa",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f2937",
+  "orientation": "portrait-primary",
+  "categories": ["social", "lifestyle"],
+  "lang": "ko",
+  "scope": "/",
+  "id": "cheeract-pwa",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "그룹 보기",
+      "short_name": "그룹",
+      "description": "내 그룹 목록 보기",
+      "url": "/dashboard",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "통계",
+      "short_name": "통계",
+      "description": "칭찬 통계 보기", 
+      "url": "/stats",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Cheeract 메인 화면"
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+cheeract",
+      "url": "/invite/%s"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": []
+}
