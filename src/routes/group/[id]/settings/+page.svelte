@@ -306,13 +306,6 @@
   {:else}
     <!-- Header -->
     <div class="mb-6">
-      <button
-        on:click={() =>
-          goto(`/group/${data.group?.id || data.groupId || $page.params.id}`)}
-        class="text-muted-foreground hover:text-foreground mb-4"
-      >
-        ← 모임으로 돌아가기
-      </button>
       <h1 class="text-3xl font-bold">모임 설정</h1>
       <p class="text-muted-foreground mt-1">
         관리자만 모임 설정을 변경할 수 있습니다

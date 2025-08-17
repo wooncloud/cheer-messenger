@@ -39,14 +39,7 @@
 		>
 			초대 링크 복사
 		</button>
-		{#if group.user_role === 'admin'}
-			<button
-				on:click={() => goto(`/group/${group.id}/settings`)}
-				class="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90"
-			>
-				모임 설정
-			</button>
-		{:else}
+		{#if group.user_role !== 'admin'}
 			<button
 				on:click={handleLeaveGroup}
 				class="bg-destructive text-destructive-foreground px-4 py-2 rounded-md hover:bg-destructive/90"

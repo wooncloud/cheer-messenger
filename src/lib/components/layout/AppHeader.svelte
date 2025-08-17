@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation'
 	
 	export let title = 'Cheeract'
-	export let showSettings = true
+	export let showSettings = false
 	export let showBack = false
 	export let onBack: (() => void) | undefined = undefined
 	

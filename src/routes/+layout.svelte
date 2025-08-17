@@ -26,7 +26,7 @@
 	
 	function getHeaderProps(routeId: string | null, params: Record<string, string>) {
 		if (routeId === '/dashboard' || routeId === '/') {
-			return { title: 'Cheeract', showSettings: true, showBack: false }
+			return { title: 'Cheeract', showSettings: false, showBack: false }
 		}
 		if (routeId === '/create-group') {
 			return { title: '새 그룹 만들기', showSettings: false, showBack: true }
@@ -49,7 +49,10 @@
 		if (routeId === '/profile/praises') {
 			return { title: '칭찬 기록', showSettings: false, showBack: true }
 		}
-		return { title: 'Cheeract', showSettings: true, showBack: false }
+		if (routeId === '/stats') {
+			return { title: '통계', showSettings: false, showBack: false }
+		}
+		return { title: 'Cheeract', showSettings: false, showBack: false }
 	}
 
 	onMount(() => {
