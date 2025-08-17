@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { goto } from '$app/navigation'
 	import { createEventDispatcher } from 'svelte'
+	import { goto } from '$app/navigation'
 
 	export let group: {
 		id: string
@@ -26,12 +26,6 @@
 
 <div class="flex items-center justify-between mb-6">
 	<div class="flex-1 min-w-0 mr-4">
-		<button
-			on:click={() => goto('/')}
-			class="text-muted-foreground hover:text-foreground mb-2"
-		>
-			← 돌아가기
-		</button>
 		<h1 class="text-3xl font-bold truncate" title={group.name}>{group.name}</h1>
 		{#if group.description}
 			<p class="text-muted-foreground mt-1 line-clamp-3 break-words" title={group.description}>{group.description}</p>
