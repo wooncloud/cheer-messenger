@@ -171,14 +171,14 @@ export async function getUserGroups(userId: string): Promise<
   }>
 > {
   try {
-    // 단일 RPC 호출로 N+1 쿼리 문제 해결 (타입 임시 우회)
+    // 단일 RPC 호출로 N+1 쿼리 문제 해결
     const { data, error } = await supabase
-      .rpc('get_user_groups_with_counts' as any, { p_user_id: userId });
+      .rpc('get_user_groups_with_counts', { p_user_id: userId });
 
     if (error) throw error;
 
     // 데이터 형태를 기존 인터페이스에 맞게 변환
-    return (data || []).map((item: any) => ({
+    return (data || []).map((item) => ({
       group_id: item.group_id,
       role: item.role,
       joined_at: item.joined_at,

@@ -246,7 +246,19 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      get_user_groups_with_counts: {
+        Args: {
+          p_user_id: string;
+        };
+        Returns: {
+          group_id: string;
+          role: string;
+          joined_at: string;
+          group_name: string;
+          group_description: string | null;
+          member_count: number;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;

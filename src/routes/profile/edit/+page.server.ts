@@ -3,11 +3,11 @@ import type { PageServerLoad, Actions } from "./$types";
 import { getUserProfile, updateUserProfile } from "$lib/utils/users";
 
 export const load: PageServerLoad = async ({ parent }) => {
-  // 상위 layout에서 이미 세션을 확인했으므로 parent()에서 가져옴
-  const { session } = await parent();
+  // 상위 layout에서 이미 사용자를 확인했으므로 parent()에서 가져옴
+  const { user } = await parent();
 
   try {
-    const profile = await getUserProfile(session.user.id);
+    const profile = await getUserProfile(user.id);
 
     if (!profile) {
       throw new Error("사용자 프로필을 찾을 수 없습니다.");
@@ -23,10 +23,10 @@ export const load: PageServerLoad = async ({ parent }) => {
 };
 
 export const actions: Actions = {
-  updateProfile: async ({ request, locals: { getSession } }) => {
-    const session = await getSession();
+  updateProfile: async ({ request, locals: { getUser } }) => {
+    const user = await getUser();
 
-    if (!session) {
+    if (!user) {
       return fail(401, {
         error: "로그인이 필요합니다.",
       });
@@ -68,7 +68,7 @@ export const actions: Actions = {
       }
 
       // 프로필 업데이트
-      await updateUserProfile(session.user.id, {
+      await updateUserProfile(user.id, {
         name: name.trim(),
         avatar_url: avatarUrl && avatarUrl.trim().length > 0 ? avatarUrl.trim() : null,
       });

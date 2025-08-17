@@ -1,128 +1,41 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { supabase } from '$lib/supabase'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
-	import type { User } from '@supabase/supabase-js'
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
 
 	let loading = true
 	let error = ''
 
-	interface TokenData {
-		accessToken: string
-		refreshToken: string
+	const errorMessages: Record<string, string> = {
+		oauth_cancelled: '로그인이 취소되었습니다.',
+		no_code: '인증 코드를 받지 못했습니다.',
+		exchange_failed: '로그인 처리 중 오류가 발생했습니다.',
+		no_user_data: '사용자 정보를 가져올 수 없습니다.',
+		unexpected_error: '예상치 못한 오류가 발생했습니다.',
+		authentication_failed: 'Google 로그인에 실패했습니다.'
 	}
 
-	function parseHashParams(hash: string): URLSearchParams {
-		return new URLSearchParams(hash.substring(1))
-	}
-
-	function extractTokens(hashParams: URLSearchParams): TokenData | null {
-		const accessToken = hashParams.get('access_token')
-		const refreshToken = hashParams.get('refresh_token')
+	onMount(() => {
+		// 서버에서 콜백 처리가 완료되지 않았거나 에러가 있을 경우
+		const urlError = $page.url.searchParams.get('error')
 		
-		return accessToken && refreshToken ? { accessToken, refreshToken } : null
-	}
-
-	function getRedirectPath(): string {
-		const next = $page.url.searchParams.get('next') || '/dashboard'
-		
-		if (!next || next === '/') {
-			return '/dashboard'
-		}
-		
-		// 이미 '/'로 시작하는 경우 그대로 사용
-		return next.startsWith('/') ? next : `/${next}`
-	}
-
-	async function createUserProfile(user: User): Promise<void> {
-		const { error: profileError } = await supabase
-			.from('users')
-			.upsert({
-				id: user.id,
-				email: user.email!,
-				name: user.user_metadata?.full_name || 
-					  user.user_metadata?.name || 
-					  user.email!.split('@')[0],
-				avatar_url: user.user_metadata?.avatar_url
-			}, {
-				onConflict: 'id'
-			})
-
-		if (profileError) {
-			console.error('Profile upsert error:', profileError)
-			// 프로필 생성 실패해도 로그인은 허용
-		}
-	}
-
-	async function handleOAuthSuccess(tokens: TokenData): Promise<void> {
-		const { data, error } = await supabase.auth.setSession({
-			access_token: tokens.accessToken,
-			refresh_token: tokens.refreshToken
-		})
-
-		if (error) {
-			console.error('Session setting error:', error)
-			throw error
-		}
-
-		if (data.session && data.user) {
-			await createUserProfile(data.user)
-			
-			// URL 정리 및 세션 동기화 대기
-			window.history.replaceState(null, '', window.location.pathname)
-			await new Promise(resolve => setTimeout(resolve, 200))
-			
-			goto(getRedirectPath())
-		}
-	}
-
-	function handleOAuthError(hashParams: URLSearchParams): never {
-		const oauthError = hashParams.get('error')
-		const oauthErrorDescription = hashParams.get('error_description')
-		throw new Error(oauthErrorDescription || oauthError || 'OAuth 인증 오류')
-	}
-
-	onMount(async () => {
-		try {
-			const hash = window.location.hash
-			
-			if (!hash) {
-				throw new Error('인증 정보가 없습니다')
-			}
-
-			const hashParams = parseHashParams(hash)
-
-			// OAuth 에러 확인
-			if (hash.includes('error')) {
-				handleOAuthError(hashParams)
-			}
-
-			// 토큰 추출 및 처리
-			if (hash.includes('access_token')) {
-				const tokens = extractTokens(hashParams)
-				if (tokens) {
-					await handleOAuthSuccess(tokens)
-					return
-				}
-			}
-
-			// 레거시: 서버 사이드 code 파라미터 (사용 안함)
-			const code = $page.url.searchParams.get('code')
-			if (code) {
-				throw new Error('인증 코드 처리 실패')
-			}
-
-			throw new Error('유효한 인증 정보가 없습니다')
-
-		} catch (authError: any) {
-			console.error('Auth callback error:', authError)
-			error = authError.message || 'Google 로그인 처리 중 오류가 발생했습니다'
+		if (urlError) {
+			error = errorMessages[urlError] || '로그인 처리 중 문제가 발생했습니다.'
 			loading = false
 			
 			// 3초 후 로그인 페이지로 리다이렉트
-			setTimeout(() => goto('/login'), 3000)
+			setTimeout(() => goto(`/login?error=${urlError}`), 3000)
+		} else {
+			// 정상적인 경우 서버 콜백 핸들러가 리다이렉트 처리
+			// 하지만 만약 여기에 도달했다면 예상치 못한 상황
+			setTimeout(() => {
+				if (loading) {
+					error = '로그인 처리 중 문제가 발생했습니다.'
+					loading = false
+					setTimeout(() => goto('/login?error=timeout'), 3000)
+				}
+			}, 5000) // 5초 타임아웃
 		}
 	})
 </script>
